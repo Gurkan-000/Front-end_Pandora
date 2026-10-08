@@ -1,0 +1,184 @@
+<div class="recovery-page">
+
+    <header class="header">
+
+        <div class="logo">
+            Pandora
+        </div>
+
+        <button type="button" class="back-button" (click)="volverAlLogin()">
+            Volver al inicio de sesión
+        </button>
+
+    </header>
+
+
+    <main class="main-content">
+
+        <section class="recovery-card">
+
+            <div class="recovery-icon">
+                🔐
+            </div>
+
+
+            <div class="recovery-header">
+
+                <h1>
+                    Nueva contraseña
+                </h1>
+
+                <p>
+                    Crea una nueva contraseña para recuperar el acceso a tu cuenta.
+                </p>
+
+            </div>
+
+
+            @if (!mensaje) {
+
+            <form class="recovery-form" [formGroup]="recuperarForm" (ngSubmit)="cambiarContrasena()">
+
+                <div class="form-group">
+
+                    <label for="contrasenaNueva">
+                        Nueva contraseña
+                    </label>
+
+                    <input id="contrasenaNueva" type="password" formControlName="contrasenaNueva"
+                        placeholder="Ingresa tu nueva contraseña" autocomplete="new-password">
+
+
+                    @if (
+                    recuperarForm.controls.contrasenaNueva.touched &&
+                    recuperarForm.controls.contrasenaNueva.invalid
+                    ) {
+
+                    <small class="field-error">
+
+                        @if (
+                        recuperarForm.controls.contrasenaNueva.hasError('required')
+                        ) {
+                        La nueva contraseña es obligatoria.
+                        }
+
+                        @if (
+                        recuperarForm.controls.contrasenaNueva.hasError('minlength')
+                        ) {
+                        La contraseña debe tener al menos 6 caracteres.
+                        }
+
+                    </small>
+
+                    }
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="contrasenaConfirmada">
+                        Confirmar contraseña
+                    </label>
+
+                    <input id="contrasenaConfirmada" type="password" formControlName="contrasenaConfirmada"
+                        placeholder="Repite tu nueva contraseña" autocomplete="new-password">
+
+
+                    @if (
+                    recuperarForm.controls.contrasenaConfirmada.touched &&
+                    recuperarForm.controls.contrasenaConfirmada.invalid
+                    ) {
+
+                    <small class="field-error">
+
+                        @if (
+                        recuperarForm.controls.contrasenaConfirmada.hasError('required')
+                        ) {
+                        Debes confirmar la contraseña.
+                        }
+
+                        @if (
+                        recuperarForm.controls.contrasenaConfirmada.hasError('minlength')
+                        ) {
+                        La contraseña debe tener al menos 6 caracteres.
+                        }
+
+                    </small>
+
+                    }
+
+                </div>
+
+
+                @if (error) {
+
+                <div class="error-message">
+                    {{ error }}
+                </div>
+
+                }
+
+
+                <button type="submit" class="primary-button" [disabled]="cargando">
+
+                    @if (cargando) {
+                    Guardando contraseña...
+                    } @else {
+                    Cambiar contraseña
+                    }
+
+                </button>
+
+            </form>
+
+            }
+
+
+            @if (mensaje) {
+
+            <div class="success-container">
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <h2>
+                    ¡Contraseña actualizada!
+                </h2>
+
+                <p>
+                    Tu contraseña se ha cambiado correctamente.
+                    Serás redirigido al inicio de sesión.
+                </p>
+
+                <button type="button" class="primary-button" (click)="volverAlLogin()">
+                    Ir al inicio de sesión
+                </button>
+
+            </div>
+
+            }
+
+
+            @if (!token && !mensaje) {
+
+            <div class="invalid-link-container">
+
+                <p>
+                    El enlace de recuperación no es válido.
+                </p>
+
+                <button type="button" class="primary-button" (click)="volverAlLogin()">
+                    Volver al inicio de sesión
+                </button>
+
+            </div>
+
+            }
+
+        </section>
+
+    </main>
+
+</div>
