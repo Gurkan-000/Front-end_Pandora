@@ -1,0 +1,49 @@
+<header class="site-header">
+    <div class="service-bar">
+        <p>Envío gratis en pedidos seleccionados <span>·</span> Ofertas nuevas cada semana</p>
+        <a routerLink="/catalogo">Descubre la tienda</a>
+    </div>
+
+    <div class="main-bar">
+        <a class="brand" routerLink="/catalogo" aria-label="Pandora, inicio de la tienda">
+            <span class="brand-mark" aria-hidden="true">P</span>
+            <span>Pandora</span>
+        </a>
+
+        <form class="search" role="search" action="/catalogo" method="get">
+            <label class="visually-hidden" for="store-search">Buscar productos</label>
+            <input id="store-search" name="q" type="search" placeholder="¿Qué estás buscando?">
+            <button type="submit" aria-label="Buscar productos">
+                <span aria-hidden="true">⌕</span>
+                <span class="search-label">Buscar</span>
+            </button>
+        </form>
+
+        <nav class="quick-links" aria-label="Accesos de usuario">
+            <a routerLink="/login"><span class="quick-label">Hola, entra</span><strong>Mi cuenta</strong></a>
+            <a routerLink="/login"><span class="quick-label">Consulta tus</span><strong>Pedidos</strong></a>
+            <a class="cart-link" routerLink="/catalogo" aria-label="Carrito, 0 artículos">
+                <span class="cart-icon" aria-hidden="true">▱</span>
+                <span><span class="quick-label">Tu</span><strong>Carrito</strong></span>
+                <span class="cart-count">0</span>
+            </a>
+        </nav>
+
+        <button class="menu-toggle" type="button" (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()" aria-controls="store-navigation">
+            <span aria-hidden="true">☰</span>
+            <span class="visually-hidden">Abrir navegación</span>
+        </button>
+    </div>
+
+    <nav id="store-navigation" class="category-bar" [class.category-bar-open]="menuOpen()"
+        aria-label="Categorías principales">
+        <a class="all-categories" routerLink="/catalogo" (click)="closeMenu()">☰ <span>Todo</span></a>
+        <a routerLink="/catalogo" (click)="closeMenu()">Ofertas</a>
+        <a routerLink="/catalogo" (click)="closeMenu()">Novedades</a>
+        <a routerLink="/catalogo" (click)="closeMenu()">Hogar</a>
+        <a routerLink="/catalogo" (click)="closeMenu()">Tecnología</a>
+        <a routerLink="/catalogo" (click)="closeMenu()">Moda</a>
+        <a routerLink="/catalogo" (click)="closeMenu()">Belleza</a>
+    </nav>
+</header>
