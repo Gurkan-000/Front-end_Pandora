@@ -19,8 +19,20 @@ export const routes: Routes = [
         component: RecuperarContrasenaComponent
     },
     {
+        path: 'productos',
+        component: MainLayoutComponent,
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./E-Commerce/pages/catalogo/catalogo.component')
+                    .then((module) => module.CatalogoComponent)
+            }
+        ]
+    },
+    {
         path: 'catalogo',
-        component: MainLayoutComponent
+        redirectTo: 'productos',
+        pathMatch: 'full'
     },
     {
         path: '',
