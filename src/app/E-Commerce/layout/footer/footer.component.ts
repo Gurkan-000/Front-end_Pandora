@@ -7,4 +7,9 @@ import { RouterLink } from '@angular/router';
     templateUrl: './footer.component.html',
     styleUrl: './footer.component.css'
 })
-export class FooterComponent {}
+export class FooterComponent {
+    volverArriba(event: Event): void {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
