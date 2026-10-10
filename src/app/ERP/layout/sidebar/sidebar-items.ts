@@ -54,6 +54,11 @@ export const MENU_ERP: SeccionMenu[] = [
                 etiqueta: 'Atributos',
                 ruta: '/erp/atributos',
                 icono: 'M4 21v-7 M4 10V3 M12 21v-9 M12 8V3 M20 21v-5 M20 12V3 M1 14h6 M9 8h6 M17 16h6'
+            },
+            {
+                etiqueta: 'Valores de atributos',
+                ruta: '/erp/valores-atributos',
+                icono: 'M12 2v20 M2 12h20 M5 5l14 14 M19 5 5 19'
             }
         ]
     },

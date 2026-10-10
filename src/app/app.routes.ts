@@ -33,6 +33,35 @@ export const routes: Routes = [
                 component: DashboardERPComponent
             },
             {
+                path: 'categorias',
+                loadComponent: () => import('./ERP/pages/features/catalogo/categoria/categoria.component')
+                    .then((module) => module.CategoriaERPComponent)
+            },
+            {
+                path: 'subcategorias',
+                data: { resource: 'subcategoria' },
+                loadComponent: () => import('./ERP/pages/features/catalogo/catalogo-recurso.component')
+                    .then((module) => module.CatalogoRecursoERPComponent)
+            },
+            {
+                path: 'marcas',
+                data: { resource: 'marca' },
+                loadComponent: () => import('./ERP/pages/features/catalogo/catalogo-recurso.component')
+                    .then((module) => module.CatalogoRecursoERPComponent)
+            },
+            {
+                path: 'atributos',
+                data: { resource: 'atributo' },
+                loadComponent: () => import('./ERP/pages/features/catalogo/catalogo-recurso.component')
+                    .then((module) => module.CatalogoRecursoERPComponent)
+            },
+            {
+                path: 'valores-atributos',
+                data: { resource: 'valorAtributo' },
+                loadComponent: () => import('./ERP/pages/features/catalogo/catalogo-recurso.component')
+                    .then((module) => module.CatalogoRecursoERPComponent)
+            },
+            {
                 path: '**',
                 redirectTo: 'dashboard'
             }

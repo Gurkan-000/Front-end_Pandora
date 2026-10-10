@@ -1,0 +1,173 @@
+<section class="resource-page">
+    <header class="page-heading">
+        <div>
+            <p class="eyebrow">Catálogo</p>
+            <h1>{{ config().titulo }}</h1>
+            <p class="description">Administra la información de {{ config().titulo.toLocaleLowerCase('es') }}.</p>
+        </div>
+        <span class="count-badge">{{ registros().length }} en total</span>
+    </header>
+
+    @if (mensaje()) {
+    <div class="notice success" role="status">
+        <span aria-hidden="true">✓</span>{{ mensaje() }}
+        <button type="button" aria-label="Cerrar mensaje" (click)="mensaje.set('')">×</button>
+    </div>
+    }
+    @if (error()) {
+    <div class="notice failure" role="alert">
+        <span aria-hidden="true">!</span>{{ error() }}
+        <button type="button" aria-label="Cerrar error" (click)="error.set('')">×</button>
+    </div>
+    }
+
+    <div class="workspace">
+        <section class="panel list-panel" aria-labelledby="resource-list-title">
+            <header class="panel-heading">
+                <div>
+                    <h2 id="resource-list-title">Listado</h2>
+                    <p>Registros disponibles en el catálogo.</p>
+                </div>
+                <button class="refresh-button" type="button" aria-label="Actualizar listado"
+                    title="Actualizar listado" [disabled]="cargando()" (click)="cargarDatos()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 7v5h-5 M4 17v-5h5 M5.6 9A7 7 0 0 1 18 6l2 6 M4 12l2 6a7 7 0 0 0 12.4-3" />
+                    </svg>
+                </button>
+            </header>
+
+            @if (cargando()) {
+            <div class="list-state" role="status"><span class="spinner" aria-hidden="true"></span>Cargando...</div>
+            } @else if (registros().length === 0) {
+            <div class="list-state empty-state">
+                <span aria-hidden="true">◇</span>
+                <strong>No hay registros todavía</strong>
+                <span>Crea el primer registro desde el formulario.</span>
+            </div>
+            } @else {
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">{{ config().fieldLabel }}</th>
+                            @if (config().parentKey) {
+                            <th scope="col">{{ config().parentLabel }}</th>
+                            }
+                            <th scope="col">ID</th>
+                            <th scope="col" class="actions-heading">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (registro of registros(); track trackKey(registro, $index)) {
+                        <tr>
+                            <td class="record-name">{{ nombre(registro) }}</td>
+                            @if (config().parentKey) {
+                            <td class="parent-name">{{ nombrePadre(registro) }}</td>
+                            }
+                            <td class="record-id">{{ id(registro) }}</td>
+                            <td>
+                                <div class="row-actions">
+                                    <button class="icon-button" type="button" [attr.aria-label]="'Editar ' + nombre(registro)"
+                                        title="Editar" (click)="editar(registro)">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                                        </svg>
+                                    </button>
+                                    <button class="icon-button delete-button" type="button"
+                                        [attr.aria-label]="'Eliminar ' + nombre(registro)" title="Eliminar"
+                                        (click)="solicitarEliminacion(registro)">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M3 6h18 M8 6V4h8v2 M19 6l-1 14H6L5 6 M10 11v5 M14 11v5" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </section>
+
+        <section class="panel form-panel" aria-labelledby="resource-form-title">
+            <header class="panel-heading">
+                <div>
+                    <p class="eyebrow">{{ idEnEdicion() ? 'Edición' : 'Nuevo registro' }}</p>
+                    <h2 id="resource-form-title">{{ tituloFormulario() }}</h2>
+                </div>
+                <span class="form-mark" aria-hidden="true">{{ idEnEdicion() ? '✎' : '+' }}</span>
+            </header>
+            <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+                @if (config().parentKey) {
+                <div class="field-group">
+                    <label for="parentId">{{ config().parentLabel }}</label>
+                    <select id="parentId" formControlName="parentId" [attr.aria-invalid]="formulario.controls.parentId.touched && formulario.controls.parentId.invalid">
+                        <option value="" disabled>
+                            @if (cargandoPadres()) {
+                            Cargando {{ config().parentLabel?.toLocaleLowerCase('es') }}...
+                            } @else if (opcionesPadre().length === 0) {
+                            No hay {{ config().parentLabel?.toLocaleLowerCase('es') }} disponibles
+                            } @else {
+                            Selecciona {{ config().parentLabel?.toLocaleLowerCase('es') }}
+                            }
+                        </option>
+                        @for (opcion of opcionesPadre(); track opcion[config().parentIdKey ?? '']) {
+                        <option [value]="opcion[config().parentIdKey ?? '']">{{ opcion[config().parentLabelKey ?? ''] }}</option>
+                        }
+                    </select>
+                    @if (!cargandoPadres() && opcionesPadre().length === 0 && !error()) {
+                    <span class="field-hint">Primero crea al menos un registro de {{ config().parentLabel?.toLocaleLowerCase('es') }}.</span>
+                    }
+                    @if (formulario.controls.parentId.touched && formulario.controls.parentId.invalid) {
+                    <span class="field-error">Selecciona {{ config().parentLabel?.toLocaleLowerCase('es') }}.</span>
+                    }
+                </div>
+                }
+                <div class="field-group">
+                    <label for="recordName">{{ config().fieldLabel }}</label>
+                    <input id="recordName" type="text" formControlName="nombre" maxlength="100" autocomplete="off"
+                        [placeholder]="'Ej. ' + (config().resource === 'valorAtributo' ? 'Rojo' : config().titulo)"
+                        [attr.aria-invalid]="formulario.controls.nombre.touched && formulario.controls.nombre.invalid">
+                    @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
+                    <span class="field-error">
+                        @if (formulario.controls.nombre.hasError('required')) {
+                        Este campo es obligatorio.
+                        } @else if (formulario.controls.nombre.hasError('maxlength')) {
+                        No puede superar los 100 caracteres.
+                        }
+                    </span>
+                    }
+                    <span class="field-hint">Máximo 100 caracteres.</span>
+                </div>
+                <div class="form-actions">
+                    @if (idEnEdicion()) {
+                    <button class="secondary-button" type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+                    }
+                    <button class="primary-button" type="submit"
+                        [disabled]="guardando() || cargandoPadres() || (config().parentResource !== undefined && opcionesPadre().length === 0)">
+                        @if (guardando()) { Procesando... }
+                        @else if (idEnEdicion()) { Guardar cambios }
+                        @else { ＋ Crear }
+                    </button>
+                </div>
+            </form>
+
+            @if (registroPorEliminar(); as registro) {
+            <div class="confirmation" role="alertdialog" aria-labelledby="delete-title" aria-modal="true">
+                <span class="confirmation-mark" aria-hidden="true">!</span>
+                <div>
+                    <h3 id="delete-title">¿Eliminar {{ config().singular }}?</h3>
+                    <p>Se eliminará “{{ nombre(registro) }}”. Esta acción no se puede deshacer.</p>
+                    <div class="confirmation-actions">
+                        <button class="secondary-button" type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+                        <button class="danger-button" type="button" [disabled]="guardando()" (click)="eliminarConfirmado()">
+                            {{ guardando() ? 'Eliminando...' : 'Sí, eliminar' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            }
+        </section>
+    </div>
+</section>
