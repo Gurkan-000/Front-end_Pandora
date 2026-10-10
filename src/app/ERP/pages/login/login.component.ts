@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -16,6 +17,7 @@ export class LoginERPComponent {
 
     private readonly formBuilder = inject(FormBuilder);
     private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
         private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
     mensaje = '';
@@ -58,11 +60,16 @@ export class LoginERPComponent {
             next: (response) => {
                 this.cargando = false;
 
-                console.log('Login ERP correcto');
-                console.log('Rol:', response.rol);
+                // Solo el administrador puede entrar al ERP.
+                if (response.rol !== 'ADMIN') {
+                    this.authService.cerrarSesion().subscribe();
 
-                this.mensaje = 'Inicio de sesión correcto.';
-                this.changeDetectorRef.detectChanges();
+                    this.error = 'Esta cuenta no tiene acceso al ERP.';
+                    this.changeDetectorRef.detectChanges();
+                    return;
+                }
+
+                this.router.navigate(['/erp/dashboard']);
             },
 
             error: (error) => {

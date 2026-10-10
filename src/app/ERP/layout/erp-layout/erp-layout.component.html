@@ -1,0 +1,18 @@
+<div class="erp-shell">
+
+    <app-erp-sidebar [abierto]="menuAbierto()" (cerrar)="cerrarMenu()" />
+
+    <div class="erp-body">
+
+        <app-erp-topbar [usuario]="usuario()" [cerrandoSesion]="cerrandoSesion()" (alternarMenu)="alternarMenu()"
+            (cerrarSesion)="cerrarSesion()" />
+
+        <main class="erp-content">
+            <router-outlet />
+        </main>
+
+        <app-erp-footer />
+
+    </div>
+
+</div>

@@ -1,0 +1,275 @@
+button {
+    font-family: inherit;
+}
+
+svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    height: 72px;
+    padding: 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.menu-button {
+    display: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text-primary);
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-button:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.menu-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.reloj {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reloj-icono {
+    width: 34px;
+    height: 34px;
+    padding: 8px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.reloj-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.fecha {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.hora {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.usuario {
+    position: relative;
+}
+
+.usuario-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 10px 6px 6px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.usuario-button:hover,
+.usuario-button[aria-expanded='true'] {
+    background: var(--background);
+    border-color: var(--primary);
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.usuario-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.25;
+}
+
+.usuario-nombre {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.usuario-rol {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.chevron {
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.chevron.girado {
+    transform: rotate(180deg);
+}
+
+.usuario-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 260px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    animation: menuAppear 0.18s ease;
+}
+
+.menu-cabecera {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 12px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.menu-nombre {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.menu-correo {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.menu-rol {
+    margin-top: 6px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.menu-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--error);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.menu-item svg {
+    width: 18px;
+    height: 18px;
+}
+
+.menu-item:hover {
+    background: #fdf0f0;
+}
+
+.menu-item:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+@keyframes menuAppear {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+
+    .topbar {
+        padding: 0 20px;
+    }
+
+    .menu-button {
+        display: flex;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .reloj-icono,
+    .fecha,
+    .usuario-info,
+    .chevron {
+        display: none;
+    }
+
+    .hora {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .usuario-button {
+        padding: 4px;
+        border-radius: 50%;
+    }
+}

@@ -1,0 +1,55 @@
+@if (abierto()) {
+<div class="backdrop" (click)="cerrar.emit()"></div>
+}
+
+<aside class="sidebar" [class.abierto]="abierto()" aria-label="Navegación principal">
+
+    <div class="sidebar-header">
+
+        <a class="brand" routerLink="/erp/dashboard" (click)="cerrar.emit()">
+            <span class="logo">Pandora</span>
+            <span class="badge">ERP</span>
+        </a>
+
+        <button type="button" class="close-button" aria-label="Cerrar menú" (click)="cerrar.emit()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6 6 18 M6 6l12 12" />
+            </svg>
+        </button>
+
+    </div>
+
+    <nav class="sidebar-nav">
+
+        @for (seccion of secciones; track $index) {
+
+        <div class="seccion">
+
+            @if (seccion.titulo) {
+            <p class="seccion-titulo">{{ seccion.titulo }}</p>
+            }
+
+            <ul>
+                @for (item of seccion.items; track item.ruta) {
+                <li>
+                    <a class="item" [routerLink]="item.ruta" routerLinkActive="activo" (click)="cerrar.emit()">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path [attr.d]="item.icono" />
+                        </svg>
+                        <span>{{ item.etiqueta }}</span>
+                    </a>
+                </li>
+                }
+            </ul>
+
+        </div>
+
+        }
+
+    </nav>
+
+    <div class="sidebar-footer">
+        Panel de administración
+    </div>
+
+</aside>

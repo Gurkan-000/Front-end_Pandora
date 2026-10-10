@@ -1,0 +1,84 @@
+<header class="topbar">
+
+    <div class="topbar-left">
+
+        <button type="button" class="menu-button" aria-label="Abrir menú" (click)="alternarMenu.emit()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 12h18 M3 6h18 M3 18h18" />
+            </svg>
+        </button>
+
+        <div class="reloj">
+
+            <svg class="reloj-icono" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2" />
+            </svg>
+
+            <div class="reloj-texto">
+                <span class="fecha">{{ fecha() }}</span>
+                <span class="hora">{{ hora() }}</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="usuario">
+
+        <button type="button" class="usuario-button" aria-haspopup="menu" [attr.aria-expanded]="menuUsuarioAbierto()"
+            (click)="alternarMenuUsuario()">
+
+            <span class="avatar">{{ iniciales() }}</span>
+
+            <span class="usuario-info">
+                <span class="usuario-nombre">{{ nombreCompleto() }}</span>
+                @if (rolEtiqueta()) {
+                <span class="usuario-rol">{{ rolEtiqueta() }}</span>
+                }
+            </span>
+
+            <svg class="chevron" [class.girado]="menuUsuarioAbierto()" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+            </svg>
+
+        </button>
+
+        @if (menuUsuarioAbierto()) {
+
+        <div class="usuario-menu" role="menu">
+
+            <div class="menu-cabecera">
+                <span class="menu-nombre">{{ nombreCompleto() }}</span>
+
+                @if (usuario()?.correo) {
+                <span class="menu-correo">{{ usuario()?.correo }}</span>
+                }
+
+                @if (rolEtiqueta()) {
+                <span class="menu-rol">{{ rolEtiqueta() }}</span>
+                }
+            </div>
+
+            <button type="button" role="menuitem" class="menu-item" [disabled]="cerrandoSesion()"
+                (click)="solicitarCierreSesion()">
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" />
+                </svg>
+
+                @if (cerrandoSesion()) {
+                <span>Cerrando sesión...</span>
+                } @else {
+                <span>Cerrar sesión</span>
+                }
+
+            </button>
+
+        </div>
+
+        }
+
+    </div>
+
+</header>
