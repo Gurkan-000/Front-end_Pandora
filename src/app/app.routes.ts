@@ -6,6 +6,7 @@ import { RecuperarContrasenaComponent } from './E-Commerce/pages/recuperacionCue
 import { LayoutERPComponent } from './ERP/layout/erp-layout/erp-layout.component';
 import { DashboardERPComponent } from './ERP/pages/dashboard/dashboard.component';
 import { erpGuard } from './core/guards/erp.guard';
+import { erpLoginGuard } from './core/guards/erp-login.guard';
 
 export const routes: Routes = [
     {
@@ -14,7 +15,8 @@ export const routes: Routes = [
     },
     {
         path: 'erp/login',
-        component: LoginERPComponent
+        component: LoginERPComponent,
+        canActivate: [erpLoginGuard]
     },
     {
         // Todas las páginas del ERP (excepto el login) viven dentro del layout.
