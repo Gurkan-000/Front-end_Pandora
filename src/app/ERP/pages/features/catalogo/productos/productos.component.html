@@ -1,0 +1,121 @@
+<section class="products-page">
+    <header class="page-heading">
+        <div>
+            <p class="eyebrow">Catálogo</p>
+            <h1>Productos</h1>
+            <p class="description">
+                Administra los productos disponibles en tu catálogo.
+            </p>
+        </div>
+
+        <span class="count-badge">
+            {{ productos().length }} en total
+        </span>
+    </header>
+
+    @if (error()) {
+    <div class="notice failure" role="alert">
+        <span aria-hidden="true">!</span>
+        {{ error() }}
+        <button type="button" aria-label="Cerrar error" (click)="error.set('')">
+            ×
+        </button>
+    </div>
+    }
+
+    <section class="panel" aria-labelledby="products-list-title">
+        <header class="panel-heading">
+            <div>
+                <h2 id="products-list-title">Listado de productos</h2>
+                <p>Productos registrados en el sistema.</p>
+            </div>
+
+            <button class="refresh-button" type="button" title="Actualizar listado" aria-label="Actualizar listado"
+                [disabled]="cargando()" (click)="cargarProductos()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 7v5h-5 M4 17v-5h5 M5.6 9A7 7 0 0 1 18 6l2 6 M4 12l2 6a7 7 0 0 0 12.4-3" />
+                </svg>
+            </button>
+        </header>
+
+        @if (cargando()) {
+        <div class="list-state" role="status">
+            <span class="spinner" aria-hidden="true"></span>
+            Cargando productos...
+        </div>
+        } @else if (productos().length === 0 && !error()) {
+        <div class="list-state empty-state">
+            <span aria-hidden="true">◇</span>
+            <strong>No hay productos todavía</strong>
+            <span>Cuando registres productos, aparecerán en este listado.</span>
+        </div>
+        } @else if (productos().length > 0) {
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="number-column">N.º</th>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Subcategoría</th>
+                        <th class="variants-count-column">N.º variantes</th>
+                        <th class="variants-column">Variantes</th>
+                        <th class="actions-heading">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (producto of productos(); track producto.idProducto; let i = $index) {
+                    <tr>
+                        <td class="number-column">{{ i + 1 }}</td>
+                        <td class="product-name">{{ producto.nombreProducto }}</td>
+                        <td>{{ producto.nombreMarca }}</td>
+                        <td class="subcategory-name">{{ producto.nombreSubcategoria }}</td>
+                        <td class="variants-count-column">
+                            <span class="count-pill">{{ producto.cantidadVariantes }}</span>
+                        </td>
+                        <td class="variants-column">
+                            <button type="button" class="view-button" (click)="verVariantes(producto)">
+                                Ver
+                            </button>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="icon-button"
+                                    [attr.aria-label]="'Editar ' + producto.nombreProducto" title="Editar"
+                                    (click)="editarProducto(producto)">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" class="icon-button delete-button"
+                                    [attr.aria-label]="'Eliminar ' + producto.nombreProducto"
+                                    [title]="'Eliminar ' + producto.nombreProducto"
+                                    (click)="eliminarProducto(producto)">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M3 6h18 M8 6V4h8v2 M19 6l-1 14H6L5 6 M10 11v5 M14 11v5" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </section>
+
+    <div class="create-product-actions">
+        <button type="button" class="create-product-button" (click)="abrirModalCrear()">
+            <span aria-hidden="true">+</span>
+            Crear Producto
+        </button>
+    </div>
+</section>
+
+@if (mostrarModalCrear()) {
+<app-crear-producto-modal [producto]="productoSeleccionado()" (cerrar)="cerrarModalCrear()"
+    (productoCreado)="cargarProductos()" />
+}

@@ -7,6 +7,7 @@ import { LayoutERPComponent } from './ERP/layout/erp-layout/erp-layout.component
 import { DashboardERPComponent } from './ERP/pages/dashboard/dashboard.component';
 import { erpGuard } from './core/guards/erp.guard';
 
+
 export const routes: Routes = [
     {
         path: 'login',
@@ -60,6 +61,12 @@ export const routes: Routes = [
                 data: { resource: 'valorAtributo' },
                 loadComponent: () => import('./ERP/pages/features/catalogo/catalogo-recurso.component')
                     .then((module) => module.CatalogoRecursoERPComponent)
+            },
+            {
+                path: 'productos',
+                loadComponent: () =>
+                    import('./ERP/pages/features/catalogo/productos/productos.component')
+                        .then((module) => module.ProductosERPComponent)
             },
             {
                 path: '**',

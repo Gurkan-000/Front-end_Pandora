@@ -1,0 +1,193 @@
+<div class="modal-backdrop" (click)="cerrarModal()">
+    <section class="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+        (click)="$event.stopPropagation()">
+        <header class="modal-header">
+            <h2 id="modal-title">
+                {{ producto ? 'Actualizar Producto' : 'Crear Nuevo Producto' }}
+            </h2>
+            <button type="button" class="close-button" aria-label="Cerrar modal" (click)="cerrarModal()">
+                ×
+            </button>
+        </header>
+
+        @if (cargandoOpciones()) {
+        <div class="modal-state" role="status">
+            Cargando marcas, subcategorías y atributos...
+        </div>
+        } @else if (errorCarga()) {
+        <div class="modal-content">
+            <div class="message error" role="alert">{{ errorCarga() }}</div>
+            <button type="button" class="secondary-button" (click)="cargarOpciones()">
+                Reintentar
+            </button>
+        </div>
+        } @else {
+        <form [formGroup]="formulario" (ngSubmit)="enviarFormulario()" novalidate>
+            <div class="modal-content">
+                <div class="form-grid">
+                    <div class="form-column">
+                        <label for="nombreProducto">Nombre del producto</label>
+                        <input id="nombreProducto" type="text" formControlName="nombreProducto"
+                            placeholder="Ej. Jean de vestir" maxlength="150" [class.invalid]="
+                  formulario.controls.nombreProducto.touched &&
+                  formulario.controls.nombreProducto.value.trim() === ''
+                " />
+
+                        @if (
+                        formulario.controls.nombreProducto.touched &&
+                        formulario.controls.nombreProducto.value.trim() === ''
+                        ) {
+                        <small class="field-error">Ingresa el nombre del producto.</small>
+                        }
+
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" formControlName="descripcion" rows="4" maxlength="1000"
+                            placeholder="Describe las características del producto" [class.invalid]="
+                  formulario.controls.descripcion.touched &&
+                  formulario.controls.descripcion.value.trim() === ''
+                "></textarea>
+
+                        @if (
+                        formulario.controls.descripcion.touched &&
+                        formulario.controls.descripcion.value.trim() === ''
+                        ) {
+                        <small class="field-error">Ingresa una descripción.</small>
+                        }
+
+                        <label for="precio">Precio (S/.)</label>
+                        <input id="precio" type="number" formControlName="precio" min="0.01" step="0.01" />
+
+                        @if (
+                        formulario.controls.precio.touched &&
+                        formulario.controls.precio.invalid
+                        ) {
+                        <small class="field-error">
+                            El precio debe ser mayor que cero.
+                        </small>
+                        }
+                    </div>
+
+                    <div class="form-column">
+                        <label for="marca">Marca</label>
+                        <select id="marca" formControlName="idMarca">
+                            <option value="">Selecciona una marca</option>
+                            @for (marca of marcas(); track marca.idMarca) {
+                            <option [value]="marca.idMarca">
+                                {{ marca.nombreMarca }}
+                            </option>
+                            }
+                        </select>
+
+                        @if (
+                        formulario.controls.idMarca.touched &&
+                        formulario.controls.idMarca.invalid
+                        ) {
+                        <small class="field-error">Selecciona una marca.</small>
+                        }
+
+                        <label for="subcategoria">Subcategoría</label>
+                        <select id="subcategoria" formControlName="idSubCategoria">
+                            <option value="">Selecciona una subcategoría</option>
+                            @for (
+                            subcategoria of subcategorias();
+                            track subcategoria.idSubCategoria
+                            ) {
+                            <option [value]="subcategoria.idSubCategoria">
+                                {{ subcategoria.nombreSubCategoria }}
+                            </option>
+                            }
+                        </select>
+
+                        @if (
+                        formulario.controls.idSubCategoria.touched &&
+                        formulario.controls.idSubCategoria.invalid
+                        ) {
+                        <small class="field-error">
+                            Selecciona una subcategoría.
+                        </small>
+                        }
+
+                        <label>Atributos</label>
+                        <div class="attribute-picker">
+                            <div class="selected-attributes">
+                                @for (
+                                id of atributosSeleccionados();
+                                track id
+                                ) {
+                                <span class="attribute-tag">
+                                    {{ nombreAtributo(id) }}
+                                    <button type="button" [attr.aria-label]="'Quitar ' + nombreAtributo(id)"
+                                        (click)="quitarAtributo(id)">
+                                        ×
+                                    </button>
+                                </span>
+                                }
+
+                                @if (atributosSeleccionados().length === 0) {
+                                <span class="selection-placeholder">
+                                    Selecciona uno o más atributos
+                                </span>
+                                }
+                            </div>
+
+                            <div class="attribute-options">
+                                @for (atributo of atributos(); track atributo.idAtributo) {
+                                <label class="attribute-option">
+                                    <input type="checkbox" [checked]="atributoSeleccionado(atributo.idAtributo)"
+                                        (change)="
+                            alternarAtributo(
+                            atributo.idAtributo,
+                            $any($event.target).checked
+                            )
+                        " />
+                                    <span>{{ atributo.nombreAtributo }}</span>
+                                </label>
+                                } @empty {
+                                <p class="no-attributes">
+                                    No hay atributos disponibles.
+                                </p>
+                                }
+                            </div>
+                        </div>
+
+                        @if (
+                        atributosSeleccionados().length === 0 &&
+                        errorFormulario() === 'Selecciona al menos un atributo.'
+                        ) {
+                        <small class="field-error">
+                            Selecciona al menos un atributo.
+                        </small>
+                        }
+                    </div>
+                </div>
+
+                @if (errorFormulario()) {
+                <div class="message error" role="alert">
+                    {{ errorFormulario() }}
+                </div>
+                }
+
+                @if (mensajeValidacion()) {
+                <div class="message success" role="status">
+                    {{ mensajeValidacion() }}
+                </div>
+                }
+            </div>
+
+            <footer class="modal-footer">
+                <button type="button" class="secondary-button" [disabled]="creandoProducto()" (click)="cerrarModal()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="primary-button" [disabled]="creandoProducto()">
+                    @if (creandoProducto()) {
+                    {{ producto ? 'Actualizando...' : 'Creando...' }}
+                    } @else {
+                    {{ producto ? 'Actualizar Producto' : 'Crear Producto' }}
+                    }
+                </button>
+            </footer>
+        </form>
+        }
+    </section>
+</div>
