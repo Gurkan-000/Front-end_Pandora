@@ -64,7 +64,13 @@ export class AuthService {
                 }
 
                 return this.refrescarSesion().pipe(
-                    switchMap(() => this.obtenerUsuarioActual())
+                    switchMap(() => this.obtenerUsuarioActual()),
+                    catchError((refreshError: HttpErrorResponse) => {
+                        if (refreshError.status === 401) {
+                            this.limpiarSesionLocal();
+                        }
+                        return throwError(() => refreshError);
+                    })
                 );
             })
         );
