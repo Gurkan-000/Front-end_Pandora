@@ -414,52 +414,6 @@ td {
     border-top-color: #fff;
 }
 
-.delete-confirmation {
-    position: absolute;
-    z-index: 2;
-    inset: 12px;
-    padding: 18px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    border: 1px solid #edcaca;
-    border-radius: 5px;
-    background: #fffafa;
-    box-shadow: 0 10px 28px rgba(50, 20, 20, 0.12);
-}
-
-.confirmation-icon {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 50%;
-    color: #9f3333;
-    background: #f9dfdf;
-    font-weight: 700;
-}
-
-.confirmation-copy h3 {
-    margin: 2px 0 6px;
-    color: var(--category-ink);
-    font-size: 14px;
-}
-
-.confirmation-copy p {
-    margin: 0;
-    color: var(--category-muted);
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.confirmation-actions {
-    margin-top: 18px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
 @keyframes spin {
     to { transform: rotate(360deg); }
 }

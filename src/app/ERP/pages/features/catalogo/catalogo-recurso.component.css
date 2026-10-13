@@ -62,11 +62,6 @@ td { height: 56px; padding: 8px 14px; border-top: 1px solid #f0edf2; color: var(
 .secondary-button:hover:not(:disabled) { background: #f8f6f9; }
 .danger-button { border-color: var(--resource-danger); color: #fff; background: var(--resource-danger); }
 .primary-button:disabled,.secondary-button:disabled,.danger-button:disabled { opacity: .6; cursor: not-allowed; }
-.confirmation { position: absolute; z-index: 2; inset: 11px; padding: 17px; display: flex; align-items: flex-start; gap: 11px; border: 1px solid #edcaca; border-radius: 5px; background: #fffafa; box-shadow: 0 10px 28px rgba(50,20,20,.12); }
-.confirmation-mark { width: 28px; height: 28px; display: grid; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #9f3333; background: #f9dfdf; font-weight: 700; }
-.confirmation h3 { margin: 2px 0 6px; color: var(--resource-ink); font-size: 14px; }
-.confirmation p { margin: 0; color: var(--resource-muted); font-size: 12px; line-height: 1.5; }
-.confirmation-actions { margin-top: 17px; display: flex; flex-wrap: wrap; gap: 8px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 1000px) { .workspace { grid-template-columns: minmax(0,1fr); } }
 @media (max-width: 620px) { .page-heading { align-items: flex-start; flex-direction: column; gap: 12px; } .page-heading h1 { font-size: 24px; } .panel-heading { padding-right: 13px; padding-left: 13px; } th,td { padding-right: 9px; padding-left: 9px; } .record-id { max-width: 110px; } .form-panel form { padding: 15px; } }

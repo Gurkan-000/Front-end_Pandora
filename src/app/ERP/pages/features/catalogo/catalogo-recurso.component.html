@@ -154,19 +154,10 @@
             </form>
 
             @if (registroPorEliminar(); as registro) {
-            <div class="confirmation" role="alertdialog" aria-labelledby="delete-title" aria-modal="true">
-                <span class="confirmation-mark" aria-hidden="true">!</span>
-                <div>
-                    <h3 id="delete-title">¿Eliminar {{ config().singular }}?</h3>
-                    <p>Se eliminará “{{ nombre(registro) }}”. Esta acción no se puede deshacer.</p>
-                    <div class="confirmation-actions">
-                        <button class="secondary-button" type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
-                        <button class="danger-button" type="button" [disabled]="guardando()" (click)="eliminarConfirmado()">
-                            {{ guardando() ? 'Eliminando...' : 'Sí, eliminar' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <app-confirmation-dialog [title]="'¿Eliminar ' + config().singular + '?'"
+                [message]="'Se eliminará “' + nombre(registro) + '”. Esta acción no se puede deshacer.'"
+                [busy]="guardando()" busyLabel="Eliminando..."
+                (cancelled)="cancelar()" (confirmed)="eliminarConfirmado()" />
             }
         </section>
     </div>

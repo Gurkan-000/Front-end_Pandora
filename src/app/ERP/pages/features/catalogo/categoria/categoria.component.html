@@ -138,22 +138,10 @@
             </form>
 
             @if (categoriaPorEliminar(); as categoria) {
-            <div class="delete-confirmation" role="alertdialog" aria-labelledby="delete-title"
-                aria-describedby="delete-description" aria-modal="true">
-                <div class="confirmation-icon" aria-hidden="true">!</div>
-                <div class="confirmation-copy">
-                    <h3 id="delete-title">¿Eliminar categoría?</h3>
-                    <p id="delete-description">Se eliminará “{{ categoria.nombreCategoria }}”. Esta acción no se puede deshacer.</p>
-                    <div class="confirmation-actions">
-                        <button class="secondary-button" type="button" [disabled]="guardando()"
-                            (click)="cancelarEliminacion()">Cancelar</button>
-                        <button class="danger-button" type="button" [disabled]="guardando()"
-                            (click)="eliminarConfirmado()">
-                            {{ guardando() ? 'Eliminando...' : 'Sí, eliminar' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <app-confirmation-dialog title="¿Eliminar categoría?"
+                [message]="'Se eliminará “' + categoria.nombreCategoria + '”. Esta acción no se puede deshacer.'"
+                [busy]="guardando()" busyLabel="Eliminando..."
+                (cancelled)="cancelarEliminacion()" (confirmed)="eliminarConfirmado()" />
             }
         </section>
     </div>

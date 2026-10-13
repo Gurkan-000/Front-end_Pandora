@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription, catchError, finalize, forkJoin, of } from 'rxjs';
 
+import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CatalogRecord, CatalogResource, CatalogoResourceApiService } from './catalogo-resource-api.service';
 
 interface ResourceConfig {
@@ -70,7 +71,7 @@ const RESOURCE_CONFIGS: Record<Exclude<CatalogResource, 'categoria'>, ResourceCo
 
 @Component({
     selector: 'app-erp-catalogo-recurso',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, ConfirmationDialogComponent],
     templateUrl: './catalogo-recurso.component.html',
     styleUrl: './catalogo-recurso.component.css'
 })

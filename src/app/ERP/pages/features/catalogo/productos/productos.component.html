@@ -119,3 +119,10 @@
 <app-crear-producto-modal [producto]="productoSeleccionado()" (cerrar)="cerrarModalCrear()"
     (productoCreado)="cargarProductos()" />
 }
+
+@if (productoPorEliminar(); as producto) {
+<app-confirmation-dialog title="¿Eliminar producto?"
+    [message]="'Se eliminará “' + producto.nombreProducto + '”. Esta acción no se puede deshacer.'"
+    [busy]="eliminandoProducto()" busyLabel="Eliminando producto..."
+    (cancelled)="cancelarEliminacionProducto()" (confirmed)="confirmarEliminacionProducto()" />
+}

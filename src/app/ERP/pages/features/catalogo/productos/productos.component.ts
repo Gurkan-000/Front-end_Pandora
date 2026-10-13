@@ -5,11 +5,12 @@ import { finalize } from 'rxjs';
 import { ProductosService } from '../../../../services/productos.service';
 import { ResponseProducto } from '../../../../interfaces/response-producto.interface';
 import { CrearProductoModalComponent } from './crear-producto-modal/crear-producto-modal.component';
+import { ConfirmationDialogComponent } from '../../../../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
     selector: 'app-productos-erp',
     standalone: true,
-    imports: [CrearProductoModalComponent],
+    imports: [CrearProductoModalComponent, ConfirmationDialogComponent],
     templateUrl: './productos.component.html',
     styleUrl: './productos.component.css'
 })
@@ -22,6 +23,8 @@ export class ProductosERPComponent implements OnInit {
     readonly mostrarModalCrear = signal(false);
 
     readonly productoSeleccionado = signal<ResponseProducto | null>(null);
+    readonly productoPorEliminar = signal<ResponseProducto | null>(null);
+    readonly eliminandoProducto = signal(false);
 
     ngOnInit(): void {
         this.cargarProductos();
@@ -68,18 +71,20 @@ export class ProductosERPComponent implements OnInit {
     }
 
     eliminarProducto(producto: ResponseProducto): void {
-        const confirmar = window.confirm(
-            `¿Estás seguro de que deseas eliminar el producto "${producto.nombreProducto}"?`
-        );
+        this.productoPorEliminar.set(producto);
+        this.error.set('');
+    }
 
-        if (!confirmar) {
+    confirmarEliminacionProducto(): void {
+        const producto = this.productoPorEliminar();
+        if (!producto || this.eliminandoProducto()) {
             return;
         }
 
-        this.error.set('');
-
+        this.eliminandoProducto.set(true);
         this.productosService
             .eliminarProducto(producto.idProducto)
+            .pipe(finalize(() => this.eliminandoProducto.set(false)))
             .subscribe({
                 next: () => {
                     this.productos.update((productosActuales) =>
@@ -87,6 +92,7 @@ export class ProductosERPComponent implements OnInit {
                             (actual) => actual.idProducto !== producto.idProducto
                         )
                     );
+                    this.productoPorEliminar.set(null);
                 },
                 error: (error) => {
                     console.error('Error al eliminar producto:', error);
@@ -100,6 +106,12 @@ export class ProductosERPComponent implements OnInit {
                     );
                 }
             });
+    }
+
+    cancelarEliminacionProducto(): void {
+        if (!this.eliminandoProducto()) {
+            this.productoPorEliminar.set(null);
+        }
     }
 
 }

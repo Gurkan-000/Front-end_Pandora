@@ -1,0 +1,24 @@
+<div class="dialog-backdrop" (click)="cancelled.emit()">
+    <section class="confirmation-dialog" role="alertdialog" aria-modal="true"
+        aria-labelledby="confirmation-title" aria-describedby="confirmation-message"
+        (click)="$event.stopPropagation()">
+        <span class="confirmation-icon" aria-hidden="true">!</span>
+        <div class="confirmation-content">
+            <h2 id="confirmation-title">{{ title() }}</h2>
+            <p id="confirmation-message">{{ message() }}</p>
+            <div class="confirmation-actions">
+                <button class="secondary-button" type="button" [disabled]="busy()" (click)="cancelled.emit()">
+                    {{ cancelLabel() }}
+                </button>
+                <button class="danger-button" type="button" [disabled]="busy()" (click)="confirmed.emit()">
+                    @if (busy()) {
+                    <span class="button-spinner" aria-hidden="true"></span>
+                    {{ busyLabel() }}
+                    } @else {
+                    {{ confirmLabel() }}
+                    }
+                </button>
+            </div>
+        </div>
+    </section>
+</div>

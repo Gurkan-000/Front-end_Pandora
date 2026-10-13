@@ -3,12 +3,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
+import { ConfirmationDialogComponent } from '../../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CategoriaApiService } from './categoria-api.service';
 import { Categoria } from './categoria.interface';
 
 @Component({
     selector: 'app-erp-categorias',
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, ConfirmationDialogComponent],
     templateUrl: './categoria.component.html',
     styleUrl: './categoria.component.css'
 })
