@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription, catchError, finalize, forkJoin, of } from 'rxjs';
-
+import { RecursosRelacionadosModalComponent } from './recursos-relacionados-modal/recursos-relacionados-modal.component';
 import { ConfirmationDialogComponent } from '../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CatalogRecord, CatalogResource, CatalogoResourceApiService } from './catalogo-resource-api.service';
 
@@ -71,7 +71,11 @@ const RESOURCE_CONFIGS: Record<Exclude<CatalogResource, 'categoria'>, ResourceCo
 
 @Component({
     selector: 'app-erp-catalogo-recurso',
-    imports: [ReactiveFormsModule, ConfirmationDialogComponent],
+    imports: [
+        ReactiveFormsModule,
+        ConfirmationDialogComponent,
+        RecursosRelacionadosModalComponent
+    ],
     templateUrl: './catalogo-recurso.component.html',
     styleUrl: './catalogo-recurso.component.css'
 })
@@ -101,6 +105,12 @@ export class CatalogoRecursoERPComponent implements OnInit {
         nombre: ['', [Validators.required, Validators.maxLength(100)]],
         parentId: ['', Validators.required]
     });
+
+    protected readonly atributoParaVerValores = signal<CatalogRecord | null>(null);
+
+    protected verValores(atributo: CatalogRecord): void {
+        this.atributoParaVerValores.set(atributo);
+    }
 
     ngOnInit(): void {
         this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
@@ -161,6 +171,7 @@ export class CatalogoRecursoERPComponent implements OnInit {
     protected guardar(): void {
         this.error.set('');
         this.mensaje.set('');
+
         const config = this.config();
 
         if (this.formulario.controls.nombre.invalid) {
@@ -174,38 +185,81 @@ export class CatalogoRecursoERPComponent implements OnInit {
         }
 
         const nombre = this.formulario.controls.nombre.value.trim();
+
         if (!nombre) {
             this.formulario.controls.nombre.setErrors({ required: true });
             return;
         }
 
         const id = this.idEnEdicion();
-        const payload: CatalogRecord = { [config.fieldKey]: nombre };
-        if (id && config.parentKey) {
-            payload[config.parentKey] = this.formulario.controls.parentId.value;
+
+        const payload: CatalogRecord = {
+            [config.fieldKey]: nombre
+        };
+
+        if (config.parentKey) {
+            payload[config.parentKey] =
+                this.formulario.controls.parentId.value;
         }
 
-        const operation = id
-            ? this.api.actualizar(config.resource, id, payload)
-            : this.api.crear(
-                config.resource,
-                payload,
-                config.parentKey ? this.formulario.controls.parentId.value : undefined
-            );
-
         this.guardando.set(true);
-        operation.pipe(finalize(() => this.guardando.set(false))).subscribe({
-            next: (registro) => {
-                this.mensaje.set(`Se ${id ? 'actualizó' : 'creó'} ${config.singular} correctamente.`);
+
+        if (id) {
+            this.api.actualizar(config.resource, id, payload).pipe(
+                finalize(() => {
+                    this.guardando.set(false);
+                    this.changeDetectorRef.markForCheck();
+                })
+            ).subscribe({
+                next: () => {
+                    this.mensaje.set(
+                        `Se actualizó ${config.singular} correctamente.`
+                    );
+
+                    this.limpiarFormulario();
+                    this.cargarDatos();
+                    this.changeDetectorRef.markForCheck();
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.error.set(this.mensajeError(error));
+                    this.changeDetectorRef.markForCheck();
+                }
+            });
+
+            return;
+        }
+
+        this.api.crear(
+            config.resource,
+            payload,
+            config.parentKey
+                ? this.formulario.controls.parentId.value
+                : undefined
+        ).pipe(
+            finalize(() => {
+                this.guardando.set(false);
+                this.changeDetectorRef.markForCheck();
+            })
+        ).subscribe({
+            next: (registro: CatalogRecord) => {
+                this.mensaje.set(
+                    `Se creó ${config.singular} correctamente.`
+                );
+
                 this.limpiarFormulario();
+
                 if (registro && registro[config.idKey]) {
-                    const registroNormalizado = this.normalizarRegistro(registro);
-                    this.registros.update((actuales) => id
-                        ? actuales.map((item) => item[config.idKey] === id ? registroNormalizado : item)
-                        : [...actuales, registroNormalizado]);
+                    const registroNormalizado =
+                        this.normalizarRegistro(registro);
+
+                    this.registros.update(actuales => [
+                        ...actuales,
+                        registroNormalizado
+                    ]);
                 } else {
                     this.cargarDatos();
                 }
+
                 this.changeDetectorRef.markForCheck();
             },
             error: (error: HttpErrorResponse) => {
@@ -213,7 +267,6 @@ export class CatalogoRecursoERPComponent implements OnInit {
                 this.changeDetectorRef.markForCheck();
             }
         });
-        this.changeDetectorRef.markForCheck();
     }
 
     protected editar(registro: CatalogRecord): void {

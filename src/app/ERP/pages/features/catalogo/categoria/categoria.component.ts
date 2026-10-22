@@ -2,14 +2,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
-
+import { RecursosRelacionadosModalComponent } from '../recursos-relacionados-modal/recursos-relacionados-modal.component';
 import { ConfirmationDialogComponent } from '../../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { CategoriaApiService } from './categoria-api.service';
-import { Categoria } from './categoria.interface';
+import { Categoria, CategoriaRequest } from './categoria.interface';
 
 @Component({
     selector: 'app-erp-categorias',
-    imports: [ReactiveFormsModule, ConfirmationDialogComponent],
+    imports: [
+        ReactiveFormsModule,
+        ConfirmationDialogComponent,
+        RecursosRelacionadosModalComponent
+    ],
     templateUrl: './categoria.component.html',
     styleUrl: './categoria.component.css'
 })
@@ -24,6 +28,12 @@ export class CategoriaERPComponent implements OnInit {
     protected readonly mensaje = signal('');
     protected readonly idEnEdicion = signal<string | null>(null);
     protected readonly categoriaPorEliminar = signal<Categoria | null>(null);
+
+    protected readonly categoriaParaVerSubcategorias = signal<Categoria | null>(null);
+
+    protected verSubcategorias(categoria: Categoria): void {
+        this.categoriaParaVerSubcategorias.set(categoria);
+    }
 
     protected readonly formulario = this.formBuilder.nonNullable.group({
         nombreCategoria: ['', [Validators.required, Validators.maxLength(100)]]
@@ -55,36 +65,56 @@ export class CategoriaERPComponent implements OnInit {
         }
 
         const id = this.idEnEdicion();
-        const request = {
-            nombreCategoria: this.formulario.controls.nombreCategoria.value.trim()
+
+        const request: CategoriaRequest = {
+            nombreCategoria:
+                this.formulario.controls.nombreCategoria.value.trim()
         };
 
         if (!request.nombreCategoria) {
-            this.formulario.controls.nombreCategoria.setErrors({ required: true });
+            this.formulario.controls.nombreCategoria.setErrors({
+                required: true
+            });
             return;
         }
 
         this.guardando.set(true);
-        const operacion = id
-            ? this.categoriaApi.actualizar(id, request)
-            : this.categoriaApi.crear(request);
 
-        operacion.pipe(
+        if (id) {
+            this.categoriaApi.actualizar(id, request).pipe(
+                finalize(() => this.guardando.set(false))
+            ).subscribe({
+                next: () => {
+                    this.mensaje.set(
+                        'La categoría se actualizó correctamente.'
+                    );
+                    this.limpiarFormulario();
+                    this.cargarCategorias();
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.error.set(this.mensajeError(error));
+                }
+            });
+
+            return;
+        }
+
+        this.categoriaApi.crear(request).pipe(
             finalize(() => this.guardando.set(false))
         ).subscribe({
-            next: (categoria) => {
-                this.mensaje.set(id ? 'La categoría se actualizó correctamente.' : 'La categoría se creó correctamente.');
+            next: (categoria: Categoria) => {
+                this.mensaje.set(
+                    'La categoría se creó correctamente.'
+                );
                 this.limpiarFormulario();
 
-                if (categoria?.idCategoria) {
-                    this.categorias.update((actuales) => id
-                        ? actuales.map((item) => item.idCategoria === id ? categoria : item)
-                        : [...actuales, categoria]);
-                } else {
-                    this.cargarCategorias();
-                }
+                this.categorias.update(actuales =>
+                    [...actuales, categoria]
+                );
             },
-            error: (error: HttpErrorResponse) => this.error.set(this.mensajeError(error))
+            error: (error: HttpErrorResponse) => {
+                this.error.set(this.mensajeError(error));
+            }
         });
     }
 
