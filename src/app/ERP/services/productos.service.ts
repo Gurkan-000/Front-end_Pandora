@@ -8,7 +8,8 @@ import {
     CrearProductoRequest,
     ResponseAtributo,
     ResponseMarca,
-    ResponseSubcategoria
+    ResponseSubcategoria,
+    ResponseImagen
 } from '../interfaces/crear-producto.interface';
 
 @Injectable({
@@ -78,6 +79,22 @@ export class ProductosService {
         return this.http.delete(
             `${this.apiUrl}/producto/eliminar/${idProducto}`,
             { responseType: 'text' }
+        );
+    }
+
+    subirImagen(imagen: File): Observable<ResponseImagen> {
+        const formData = new FormData();
+        formData.append('imagen', imagen);
+
+        return this.http.post<ResponseImagen>(
+            `${this.apiUrl}/imagen`,
+            formData
+        );
+    }
+
+    eliminarImagen(urlImagen: string): Observable<void> {
+        return this.http.delete<void>(
+            `${this.apiUrl}${urlImagen}`
         );
     }
 

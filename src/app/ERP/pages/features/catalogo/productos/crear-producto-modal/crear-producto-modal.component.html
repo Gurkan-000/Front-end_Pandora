@@ -25,34 +25,21 @@
         <form [formGroup]="formulario" (ngSubmit)="enviarFormulario()" novalidate>
             <div class="modal-content">
                 <div class="form-grid">
+
                     <div class="form-column">
-                        <label for="nombreProducto">Nombre del producto</label>
-                        <input id="nombreProducto" type="text" formControlName="nombreProducto"
-                            placeholder="Ej. Jean de vestir" maxlength="150" [class.invalid]="
-                  formulario.controls.nombreProducto.touched &&
-                  formulario.controls.nombreProducto.value.trim() === ''
-                " />
+                        <label for="imagenProducto">Imagen</label>
 
-                        @if (
-                        formulario.controls.nombreProducto.touched &&
-                        formulario.controls.nombreProducto.value.trim() === ''
-                        ) {
-                        <small class="field-error">Ingresa el nombre del producto.</small>
-                        }
+                        <label class="image-upload" for="imagenProducto">
+                            @if (imagenPrevisualizacion(); as imagen) {
+                            <img [src]="imagen" alt="Vista previa del producto" />
+                            } @else {
+                            <span class="upload-icon" aria-hidden="true">+</span>
+                            <span>Subir imagen</span>
+                            }
+                        </label>
 
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" formControlName="descripcion" rows="4" maxlength="1000"
-                            placeholder="Describe las características del producto" [class.invalid]="
-                  formulario.controls.descripcion.touched &&
-                  formulario.controls.descripcion.value.trim() === ''
-                "></textarea>
-
-                        @if (
-                        formulario.controls.descripcion.touched &&
-                        formulario.controls.descripcion.value.trim() === ''
-                        ) {
-                        <small class="field-error">Ingresa una descripción.</small>
-                        }
+                        <input id="imagenProducto" class="image-input" type="file" accept="image/*"
+                            (change)="seleccionarImagen($event)" />
 
                         <label for="precio">Precio (S/.)</label>
                         <input id="precio" type="number" formControlName="precio" min="0.01" step="0.01" />
@@ -67,7 +54,33 @@
                         }
                     </div>
 
+
                     <div class="form-column">
+                        <label for="nombreProducto">Nombre del producto</label>
+                        <input id="nombreProducto" type="text" formControlName="nombreProducto"
+                            placeholder="Ej. Jean de vestir" maxlength="150" />
+
+                        @if (
+                        formulario.controls.nombreProducto.touched &&
+                        formulario.controls.nombreProducto.value.trim() === ''
+                        ) {
+                        <small class="field-error">
+                            Ingresa el nombre del producto.
+                        </small>
+                        }
+
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" formControlName="descripcion" rows="4" maxlength="1000"
+                            placeholder="Describe las características del producto"></textarea>
+
+                        @if (
+                        formulario.controls.descripcion.touched &&
+                        formulario.controls.descripcion.value.trim() === ''
+                        ) {
+                        <small class="field-error">
+                            Ingresa una descripción.
+                        </small>
+                        }
                         <label for="marca">Marca</label>
                         <select id="marca" formControlName="idMarca">
                             <option value="">Selecciona una marca</option>
