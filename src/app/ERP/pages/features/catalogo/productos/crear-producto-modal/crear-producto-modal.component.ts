@@ -54,6 +54,15 @@ export class CrearProductoModalComponent implements OnInit {
 
     readonly archivoImagen = signal<File | null>(null);
 
+    readonly modalImagenAbierto = signal(false);
+    readonly archivoNuevaImagen = signal<File | null>(null);
+    readonly vistaPreviaNuevaImagen = signal<string | null>(null);
+    readonly cambiandoImagen = signal(false);
+    readonly errorImagen = signal('');
+    readonly mensajeImagen = signal('');
+
+    readonly baseUrl = 'http://localhost:8080';
+
     seleccionarImagen(event: Event): void {
         const input = event.target as HTMLInputElement;
         const archivo = input.files?.[0];
@@ -302,7 +311,9 @@ export class CrearProductoModalComponent implements OnInit {
                     error: (errorCreacion) => {
                         console.error('Error al crear producto:', errorCreacion);
 
-                        this.productosService.eliminarImagen(urlImagen).subscribe({
+                        this.productosService.eliminarImagen(
+                            this.obtenerNombreImagen(urlImagen)
+                        ).subscribe({
                             next: () => {
                                 this.mostrarErrorCreacion(errorCreacion);
                             },
@@ -354,4 +365,165 @@ export class CrearProductoModalComponent implements OnInit {
 
         this.cerrar.emit();
     }
+
+    abrirModalImagen(): void {
+        if (!this.producto) return;
+
+        this.archivoNuevaImagen.set(null);
+        this.vistaPreviaNuevaImagen.set(null);
+        this.errorImagen.set('');
+        this.mensajeImagen.set('');
+        this.modalImagenAbierto.set(true);
+    }
+
+    cerrarModalImagen(): void {
+        if (this.cambiandoImagen()) return;
+
+        this.modalImagenAbierto.set(false);
+        this.archivoNuevaImagen.set(null);
+        this.vistaPreviaNuevaImagen.set(null);
+        this.errorImagen.set('');
+    }
+
+    seleccionarNuevaImagen(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        const archivo = input.files?.[0];
+
+        if (!archivo) return;
+
+        if (!archivo.type.startsWith('image/')) {
+            this.errorImagen.set('Selecciona un archivo de imagen válido.');
+            input.value = '';
+            return;
+        }
+
+        this.archivoNuevaImagen.set(archivo);
+        this.errorImagen.set('');
+        this.mensajeImagen.set('');
+
+        const lector = new FileReader();
+
+        lector.onload = () => {
+            this.vistaPreviaNuevaImagen.set(lector.result as string);
+        };
+
+        lector.onerror = () => {
+            this.errorImagen.set('No fue posible previsualizar la imagen.');
+            this.archivoNuevaImagen.set(null);
+            this.vistaPreviaNuevaImagen.set(null);
+        };
+
+        lector.readAsDataURL(archivo);
+    }
+
+    guardarNuevaImagen(): void {
+        const producto = this.producto;
+        const archivo = this.archivoNuevaImagen();
+
+        if (!producto || !archivo || this.cambiandoImagen()) {
+            if (!archivo) {
+                this.errorImagen.set('Selecciona una imagen antes de continuar.');
+            }
+            return;
+        }
+
+        this.cambiandoImagen.set(true);
+        this.errorImagen.set('');
+        this.mensajeImagen.set('');
+
+        const urlAnterior = producto.urlImagen;
+
+        this.productosService.subirImagen(archivo).subscribe({
+            next: (respuesta) => {
+                const urlNueva = respuesta.urlImagen;
+
+                this.productosService.actualizarUrlImagen(
+                    producto.idProducto,
+                    urlNueva
+                ).subscribe({
+                    next: () => {
+                        // El PATCH confirmó que el producto ya tiene la nueva URL.
+                        this.producto = {
+                            ...producto,
+                            urlImagen: urlNueva
+                        };
+
+                        this.productoCreado.emit();
+
+                        const nombreImagenAnterior =
+                            this.obtenerNombreImagen(urlAnterior);
+
+                        this.productosService
+                            .eliminarImagen(nombreImagenAnterior)
+                            .subscribe({
+                                next: () => {
+                                    this.finalizarCambioImagen();
+                                },
+                                error: (error) => {
+                                    console.error(
+                                        'La imagen se actualizó, pero no se pudo eliminar la anterior:',
+                                        error
+                                    );
+
+                                    this.finalizarCambioImagen(
+                                        'La imagen se actualizó, pero no se pudo eliminar el archivo anterior.'
+                                    );
+                                }
+                            });
+                    },
+                    error: (error) => {
+                        console.error('Error al actualizar la URL:', error);
+
+                        // El PATCH falló: intentamos limpiar la imagen recién subida.
+                        this.productosService
+                            .eliminarImagen(this.obtenerNombreImagen(urlNueva))
+                            .subscribe({
+                                next: () => {
+                                    this.cambiandoImagen.set(false);
+                                    this.errorImagen.set(
+                                        'No se pudo asignar la nueva imagen. Se conservó la anterior.'
+                                    );
+                                },
+                                error: (errorLimpieza) => {
+                                    console.error(
+                                        'No se pudo eliminar la nueva imagen:',
+                                        errorLimpieza
+                                    );
+
+                                    this.cambiandoImagen.set(false);
+                                    this.errorImagen.set(
+                                        'No se pudo actualizar la imagen y tampoco se pudo eliminar el archivo nuevo.'
+                                    );
+                                }
+                            });
+                    }
+                });
+            },
+            error: (error) => {
+                console.error('Error al subir la imagen:', error);
+                this.cambiandoImagen.set(false);
+                this.errorImagen.set(
+                    'No se pudo subir la nueva imagen. La imagen actual no se modificó.'
+                );
+            }
+        });
+    }
+
+    private obtenerNombreImagen(urlImagen: string): string {
+        const rutaSinParametros = urlImagen.split('?')[0];
+        return rutaSinParametros.substring(
+            rutaSinParametros.lastIndexOf('/') + 1
+        );
+    }
+
+    private finalizarCambioImagen(advertencia = ''): void {
+        this.cambiandoImagen.set(false);
+        this.archivoNuevaImagen.set(null);
+        this.vistaPreviaNuevaImagen.set(null);
+        this.mensajeImagen.set(
+            advertencia || 'Imagen actualizada correctamente.'
+        );
+        this.modalImagenAbierto.set(false);
+    }
+
 }

@@ -92,9 +92,25 @@ export class ProductosService {
         );
     }
 
-    eliminarImagen(urlImagen: string): Observable<void> {
+    actualizarUrlImagen(
+        idProducto: string,
+        urlImagen: string
+    ): Observable<string> {
+        const params = { urlImagen };
+
+        return this.http.patch(
+            `${this.apiUrl}/producto/actualizar/${idProducto}/urlImagen`,
+            null,
+            {
+                params,
+                responseType: 'text'
+            }
+        );
+    }
+
+    eliminarImagen(nombreImagen: string): Observable<void> {
         return this.http.delete<void>(
-            `${this.apiUrl}${urlImagen}`
+            `${this.apiUrl}/imagen/${encodeURIComponent(nombreImagen)}`
         );
     }
 
