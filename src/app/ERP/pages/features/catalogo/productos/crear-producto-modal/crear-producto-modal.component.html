@@ -54,6 +54,16 @@
                             (change)="seleccionarImagen($event)" />
                         }
 
+                        <div class="image-recommendation">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+                            <p>
+                                Resolución recomendada:
+                                <strong>1500 × 1500 px</strong>
+                                <span>Formato cuadrado (1:1). Es una recomendación, no un requisito.</span>
+                            </p>
+                        </div>
+
                         <label for="precio">Precio (S/.)</label>
                         <input id="precio" type="number" formControlName="precio" min="0.01" step="0.01" />
 
@@ -248,6 +258,16 @@
                 <input class="image-input" type="file" accept="image/*" [disabled]="cambiandoImagen()"
                     (change)="seleccionarNuevaImagen($event)" />
             </label>
+
+            <div class="image-recommendation">
+                <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+                <p>
+                    Resolución recomendada:
+                    <strong>1500 × 1500 px</strong>
+                    <span>Formato cuadrado (1:1). Es una recomendación, no un requisito.</span>
+                </p>
+            </div>
 
             @if (errorImagen()) {
             <div class="message error" role="alert">

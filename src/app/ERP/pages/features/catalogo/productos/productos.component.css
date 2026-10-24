@@ -377,3 +377,275 @@ td {
     outline: 3px solid rgba(108, 63, 143, .25);
     outline-offset: 2px;
 }
+
+
+
+.variants-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    background: rgba(35, 28, 39, 0.58);
+    backdrop-filter: blur(3px);
+}
+
+.variants-modal {
+    width: min(900px, 100%);
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #ded3e8;
+    border-radius: 9px;
+    background: #fff;
+    box-shadow: 0 18px 55px rgba(30, 20, 35, 0.3);
+}
+
+.variants-modal-header {
+    padding: 22px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.variants-modal-header .eyebrow {
+    margin: 0 0 5px;
+    color: var(--resource-primary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.variants-modal-header h2 {
+    margin: 0;
+    color: var(--resource-ink);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.variants-product-name {
+    margin: 7px 0 0;
+    color: var(--resource-muted);
+    font-size: 13px;
+}
+
+.variants-close-button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: 1px solid var(--resource-border);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--resource-ink);
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.variants-close-button:hover {
+    background: #f7f2fa;
+}
+
+.variants-modal-content {
+    padding: 0 18px 18px;
+    overflow: auto;
+}
+
+.variants-panel {
+    border: 1px solid var(--resource-border);
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.variants-panel-header {
+    min-height: 60px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--resource-border);
+}
+
+.variants-panel-header h3 {
+    margin: 0;
+    color: var(--resource-ink);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.variants-panel-header .refresh-button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.variants-panel-header .refresh-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+.variants-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.variants-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    color: var(--resource-ink);
+    font-size: 12px;
+}
+
+.variants-table th,
+.variants-table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #eee9f1;
+    text-align: left;
+    vertical-align: middle;
+    overflow-wrap: break-word;
+}
+
+.variants-table th {
+    background: #faf8fc;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.variants-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.variants-table tbody tr:hover {
+    background: #fcfaff;
+}
+
+/* Número de fila */
+.variants-table .variant-number {
+    width: 48px;
+    text-align: center;
+}
+
+/* Stock */
+.variants-table th:nth-last-child(3),
+.variants-table td:nth-last-child(3) {
+    width: 85px;
+    text-align: center;
+}
+
+/* Variante principal */
+.variants-table th:nth-last-child(2),
+.variants-table td:nth-last-child(2) {
+    width: 110px;
+    text-align: center;
+}
+
+/* Acciones */
+.variants-table th:last-child,
+.variants-table td:last-child {
+    width: 110px;
+    text-align: center;
+}
+
+.variants-table .variant-actions-heading {
+    text-align: center;
+}
+
+.variant-principal {
+    text-align: center !important;
+}
+
+.principal-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #512d6b;
+    background: #eee5f5;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.not-principal {
+    color: var(--resource-muted);
+}
+
+.variant-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.variant-actions .icon-button {
+    width: 30px;
+    height: 30px;
+}
+
+.variant-actions .icon-button:disabled,
+.variants-modal-footer .create-product-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.variants-state {
+    min-height: 150px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--resource-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.variants-error {
+    color: #8f3030;
+}
+
+.variants-modal-footer {
+    padding: 14px 18px 18px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #eee9f1;
+    background: #fff;
+}
+
+@media (max-width: 620px) {
+    .variants-modal-backdrop {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .variants-modal {
+        max-height: calc(100vh - 20px);
+    }
+
+    .variants-modal-header {
+        padding: 17px 15px 14px;
+    }
+
+    .variants-modal-header h2 {
+        font-size: 18px;
+    }
+
+    .variants-modal-content {
+        padding: 0 10px 12px;
+    }
+
+    .variants-table th,
+    .variants-table td {
+        padding: 11px 9px;
+    }
+
+    .variants-modal-footer {
+        padding: 12px 10px;
+    }
+}

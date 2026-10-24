@@ -12,6 +12,8 @@ import {
     ResponseImagen
 } from '../interfaces/crear-producto.interface';
 
+import { ResponseVarianteProducto } from '../interfaces/response-variante-producto.interface';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -47,6 +49,12 @@ export class ProductosService {
     listarAtributosProducto(idProducto: string): Observable<ResponseAtributo[]> {
         return this.http.get<ResponseAtributo[]>(
             `${this.apiUrl}/producto/listar/${idProducto}/atributos`
+        );
+    }
+
+    listarVariantesProducto(idProducto: string): Observable<ResponseVarianteProducto[]> {
+        return this.http.get<ResponseVarianteProducto[]>(
+            `${this.apiUrl}/producto/listar/${idProducto}/variantes`
         );
     }
 
