@@ -28,8 +28,8 @@
                     <h2 id="resource-list-title">Listado</h2>
                     <p>Registros disponibles en el catálogo.</p>
                 </div>
-                <button class="refresh-button" type="button" aria-label="Actualizar listado"
-                    title="Actualizar listado" [disabled]="cargando()" (click)="cargarDatos()">
+                <button class="refresh-button" type="button" aria-label="Actualizar listado" title="Actualizar listado"
+                    [disabled]="cargando()" (click)="cargarDatos()">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M20 7v5h-5 M4 17v-5h5 M5.6 9A7 7 0 0 1 18 6l2 6 M4 12l2 6a7 7 0 0 0 12.4-3" />
                     </svg>
@@ -49,26 +49,41 @@
                 <table>
                     <thead>
                         <tr>
+                            <th scope="col">N.º</th>
                             <th scope="col">{{ config().fieldLabel }}</th>
                             @if (config().parentKey) {
                             <th scope="col">{{ config().parentLabel }}</th>
                             }
-                            <th scope="col">ID</th>
+                            @if (config().resource === 'atributo') {
+                            <th scope="col">Valores</th>
+                            }
                             <th scope="col" class="actions-heading">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @for (registro of registros(); track trackKey(registro, $index)) {
                         <tr>
+                            <td>{{ $index + 1 }}</td>
                             <td class="record-name">{{ nombre(registro) }}</td>
+
                             @if (config().parentKey) {
                             <td class="parent-name">{{ nombrePadre(registro) }}</td>
                             }
-                            <td class="record-id">{{ id(registro) }}</td>
+
+                            @if (config().resource === 'atributo') {
+                            <td>
+                                <button type="button" class="related-link" [disabled]="!registro[config().idKey]"
+                                    (click)="verValores(registro)">
+                                    Ver
+                                </button>
+                            </td>
+                            }
+
                             <td>
                                 <div class="row-actions">
-                                    <button class="icon-button" type="button" [attr.aria-label]="'Editar ' + nombre(registro)"
-                                        title="Editar" (click)="editar(registro)">
+                                    <button class="icon-button" type="button"
+                                        [attr.aria-label]="'Editar ' + nombre(registro)" title="Editar"
+                                        (click)="editar(registro)">
                                         <svg viewBox="0 0 24 24" aria-hidden="true">
                                             <path d="M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
                                         </svg>
@@ -102,7 +117,8 @@
                 @if (config().parentKey) {
                 <div class="field-group">
                     <label for="parentId">{{ config().parentLabel }}</label>
-                    <select id="parentId" formControlName="parentId" [attr.aria-invalid]="formulario.controls.parentId.touched && formulario.controls.parentId.invalid">
+                    <select id="parentId" formControlName="parentId"
+                        [attr.aria-invalid]="formulario.controls.parentId.touched && formulario.controls.parentId.invalid">
                         <option value="" disabled>
                             @if (cargandoPadres()) {
                             Cargando {{ config().parentLabel?.toLocaleLowerCase('es') }}...
@@ -113,11 +129,13 @@
                             }
                         </option>
                         @for (opcion of opcionesPadre(); track opcion[config().parentIdKey ?? '']) {
-                        <option [value]="opcion[config().parentIdKey ?? '']">{{ opcion[config().parentLabelKey ?? ''] }}</option>
+                        <option [value]="opcion[config().parentIdKey ?? '']">{{ opcion[config().parentLabelKey ?? ''] }}
+                        </option>
                         }
                     </select>
                     @if (!cargandoPadres() && opcionesPadre().length === 0 && !error()) {
-                    <span class="field-hint">Primero crea al menos un registro de {{ config().parentLabel?.toLocaleLowerCase('es') }}.</span>
+                    <span class="field-hint">Primero crea al menos un registro de {{
+                        config().parentLabel?.toLocaleLowerCase('es') }}.</span>
                     }
                     @if (formulario.controls.parentId.touched && formulario.controls.parentId.invalid) {
                     <span class="field-error">Selecciona {{ config().parentLabel?.toLocaleLowerCase('es') }}.</span>
@@ -142,7 +160,8 @@
                 </div>
                 <div class="form-actions">
                     @if (idEnEdicion()) {
-                    <button class="secondary-button" type="button" [disabled]="guardando()" (click)="cancelar()">Cancelar</button>
+                    <button class="secondary-button" type="button" [disabled]="guardando()"
+                        (click)="cancelar()">Cancelar</button>
                     }
                     <button class="primary-button" type="submit"
                         [disabled]="guardando() || cargandoPadres() || (config().parentResource !== undefined && opcionesPadre().length === 0)">
@@ -156,9 +175,17 @@
             @if (registroPorEliminar(); as registro) {
             <app-confirmation-dialog [title]="'¿Eliminar ' + config().singular + '?'"
                 [message]="'Se eliminará “' + nombre(registro) + '”. Esta acción no se puede deshacer.'"
-                [busy]="guardando()" busyLabel="Eliminando..."
-                (cancelled)="cancelar()" (confirmed)="eliminarConfirmado()" />
+                [busy]="guardando()" busyLabel="Eliminando..." (cancelled)="cancelar()"
+                (confirmed)="eliminarConfirmado()" />
             }
         </section>
     </div>
 </section>
+
+@if (atributoParaVerValores(); as atributo) {
+    <app-recursos-relacionados-modal
+        recurso="valorAtributo"
+        [idPadre]="atributo[config().idKey]"
+        [nombrePadre]="nombre(atributo)"
+        (cerrado)="atributoParaVerValores.set(null)" />
+}

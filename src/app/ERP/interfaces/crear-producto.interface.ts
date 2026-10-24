@@ -22,3 +22,7 @@ export interface CrearProductoRequest {
     urlImagen: string;
     idAtributos: string[];
 }
+
+export interface ResponseImagen {
+    urlImagen: string;
+}

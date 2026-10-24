@@ -8,8 +8,11 @@ import {
     CrearProductoRequest,
     ResponseAtributo,
     ResponseMarca,
-    ResponseSubcategoria
+    ResponseSubcategoria,
+    ResponseImagen
 } from '../interfaces/crear-producto.interface';
+
+import { ResponseVarianteProducto } from '../interfaces/response-variante-producto.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -49,6 +52,12 @@ export class ProductosService {
         );
     }
 
+    listarVariantesProducto(idProducto: string): Observable<ResponseVarianteProducto[]> {
+        return this.http.get<ResponseVarianteProducto[]>(
+            `${this.apiUrl}/producto/listar/${idProducto}/variantes`
+        );
+    }
+
     actualizarProducto(
         idProducto: string,
         idMarca: string,
@@ -78,6 +87,38 @@ export class ProductosService {
         return this.http.delete(
             `${this.apiUrl}/producto/eliminar/${idProducto}`,
             { responseType: 'text' }
+        );
+    }
+
+    subirImagen(imagen: File): Observable<ResponseImagen> {
+        const formData = new FormData();
+        formData.append('imagen', imagen);
+
+        return this.http.post<ResponseImagen>(
+            `${this.apiUrl}/imagen`,
+            formData
+        );
+    }
+
+    actualizarUrlImagen(
+        idProducto: string,
+        urlImagen: string
+    ): Observable<string> {
+        const params = { urlImagen };
+
+        return this.http.patch(
+            `${this.apiUrl}/producto/actualizar/${idProducto}/urlImagen`,
+            null,
+            {
+                params,
+                responseType: 'text'
+            }
+        );
+    }
+
+    eliminarImagen(nombreImagen: string): Observable<void> {
+        return this.http.delete<void>(
+            `${this.apiUrl}/imagen/${encodeURIComponent(nombreImagen)}`
         );
     }
 

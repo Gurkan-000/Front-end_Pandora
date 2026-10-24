@@ -8,19 +8,24 @@ import { ProductosERPComponent } from './productos.component';
 
 describe('ProductosERPComponent deletion confirmation', () => {
     let fixture: ComponentFixture<ProductosERPComponent>;
-    let productosService: Pick<ProductosService, 'listarProductos' | 'eliminarProducto'>;
+    let productosService: Pick<
+        ProductosService,
+        'listarProductos' | 'eliminarProducto' | 'eliminarImagen'
+    >;
     const producto = {
         idProducto: 'product-1',
         nombreProducto: 'Reloj Meridian',
         nombreMarca: 'Meridian',
         nombreSubcategoria: 'Relojes',
-        cantidadVariantes: 1
+        cantidadVariantes: 1,
+        urlImagen: '/api/imagen/reloj.webp'
     } as ResponseProducto;
 
     beforeEach(async () => {
         productosService = {
             listarProductos: vi.fn(() => of([producto])),
-            eliminarProducto: vi.fn(() => of('Eliminado'))
+            eliminarProducto: vi.fn(() => of('Eliminado')),
+            eliminarImagen: vi.fn(() => of(undefined))
         };
 
         await TestBed.configureTestingModule({
@@ -57,5 +62,10 @@ describe('ProductosERPComponent deletion confirmation', () => {
         expect(productosService.eliminarProducto).toHaveBeenCalledWith('product-1');
         expect(fixture.componentInstance.productos()).toEqual([]);
         expect(fixture.nativeElement.querySelector('app-confirmation-dialog')).toBeNull();
+        expect(productosService.eliminarProducto)
+            .toHaveBeenCalledWith('product-1');
+        expect(productosService.eliminarImagen)
+            .toHaveBeenCalledWith('reloj.webp');
+        expect(fixture.componentInstance.productos()).toEqual([]);
     });
 });

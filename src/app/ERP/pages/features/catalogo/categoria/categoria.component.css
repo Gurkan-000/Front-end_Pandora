@@ -465,3 +465,24 @@ td {
         animation-duration: 2s;
     }
 }
+
+.related-link {
+    padding: 5px 12px;
+    border: 1px solid #ded4e4;
+    border-radius: 5px;
+    color: #70468b;
+    background: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.related-link:hover:not(:disabled) {
+    background: #f7f1fa;
+}
+
+.related-link:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}

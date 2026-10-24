@@ -55,28 +55,35 @@
                 <table>
                     <thead>
                         <tr>
+                            <th scope="col">N.º</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Identificador</th>
+                            <th scope="col">SubCategorías</th>
                             <th scope="col" class="actions-heading">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @for (categoria of categorias(); track trackKey(categoria, $index)) {
                         <tr>
+                            <td>{{ $index + 1 }}</td>
                             <td class="category-name">{{ categoria.nombreCategoria }}</td>
-                            <td class="category-id">{{ categoria.idCategoria }}</td>
+                            <td>
+                                <button type="button" class="related-link" [disabled]="!categoria.idCategoria"
+                                    (click)="verSubcategorias(categoria)">
+                                    Ver
+                                </button>
+                            </td>
                             <td>
                                 <div class="row-actions">
-                                    <button class="icon-button edit-button" type="button"
-                                        [attr.aria-label]="'Editar ' + categoria.nombreCategoria"
-                                        title="Editar categoría" (click)="editar(categoria)">
+                                    <button class="icon-button" type="button"
+                                        [attr.aria-label]="'Editar ' + categoria.nombreCategoria" title="Editar"
+                                        (click)="editar(categoria)">
                                         <svg viewBox="0 0 24 24" aria-hidden="true">
                                             <path d="M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
                                         </svg>
                                     </button>
                                     <button class="icon-button delete-button" type="button"
-                                        [attr.aria-label]="'Eliminar ' + categoria.nombreCategoria"
-                                        title="Eliminar categoría" (click)="solicitarEliminacion(categoria)">
+                                        [attr.aria-label]="'Eliminar ' + categoria.nombreCategoria" title="Eliminar"
+                                        (click)="solicitarEliminacion(categoria)">
                                         <svg viewBox="0 0 24 24" aria-hidden="true">
                                             <path d="M3 6h18 M8 6V4h8v2 M19 6l-1 14H6L5 6 M10 11v5 M14 11v5" />
                                         </svg>
@@ -140,9 +147,17 @@
             @if (categoriaPorEliminar(); as categoria) {
             <app-confirmation-dialog title="¿Eliminar categoría?"
                 [message]="'Se eliminará “' + categoria.nombreCategoria + '”. Esta acción no se puede deshacer.'"
-                [busy]="guardando()" busyLabel="Eliminando..."
-                (cancelled)="cancelarEliminacion()" (confirmed)="eliminarConfirmado()" />
+                [busy]="guardando()" busyLabel="Eliminando..." (cancelled)="cancelarEliminacion()"
+                (confirmed)="eliminarConfirmado()" />
             }
         </section>
     </div>
 </section>
+
+@if (categoriaParaVerSubcategorias(); as categoria) {
+    <app-recursos-relacionados-modal
+        recurso="subcategoria"
+        [idPadre]="categoria.idCategoria"
+        [nombrePadre]="categoria.nombreCategoria"
+        (cerrado)="categoriaParaVerSubcategorias.set(null)" />
+}

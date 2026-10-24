@@ -23,12 +23,15 @@ export class CategoriaApiService {
         return this.http.post<Categoria>(`${this.apiUrl}/crear`, request);
     }
 
-    actualizar(id: string, request: CategoriaRequest): Observable<Categoria> {
-        return this.http.put<Categoria>(
+
+    actualizar(id: string, request: CategoriaRequest): Observable<string> {
+        return this.http.put(
             `${this.apiUrl}/actualizar/${encodeURIComponent(id)}`,
-            request
+            request,
+            { responseType: 'text' }
         );
     }
+
 
     eliminar(id: string): Observable<string> {
         return this.http.delete(`${this.apiUrl}/eliminar/${encodeURIComponent(id)}`, {
