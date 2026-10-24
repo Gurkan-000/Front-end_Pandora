@@ -13,8 +13,11 @@ import { ResponseProducto } from '../../../../interfaces/response-producto.inter
 import { CrearProductoModalComponent } from './crear-producto-modal/crear-producto-modal.component';
 import { ConfirmationDialogComponent } from '../../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { ResponseAtributo } from '../../../../interfaces/crear-producto.interface';
-import { ResponseVarianteProducto } from '../../../../interfaces/response-variante-producto.interface';
+import {
+    ResponseVarianteProducto
+} from '../../../../interfaces/response-variante-producto.interface';
 import { CrearVarianteProductoModalComponent } from './crear-varianteproducto-modal/crear-varianteproducto-modal.component';
+import { ModalVariantePrincipalComponent } from './modal-variante-principal/modal-variante-principal.component';
 
 @Component({
     selector: 'app-productos-erp',
@@ -22,7 +25,8 @@ import { CrearVarianteProductoModalComponent } from './crear-varianteproducto-mo
     imports: [
         CrearProductoModalComponent,
         CrearVarianteProductoModalComponent,
-        ConfirmationDialogComponent
+        ConfirmationDialogComponent,
+        ModalVariantePrincipalComponent
     ],
     templateUrl: './productos.component.html',
     styleUrl: './productos.component.css'
@@ -46,6 +50,12 @@ export class ProductosERPComponent implements OnInit {
     readonly errorVariantes = signal('');
 
     readonly mostrarModalCrearVariante = signal(false);
+
+    readonly varianteSeleccionada = signal<ResponseVarianteProducto | null>(null);
+    readonly variantePorEliminar = signal<ResponseVarianteProducto | null>(null);
+    readonly eliminandoVariante = signal(false);
+
+    readonly mostrarAvisoVariantePrincipal = signal(false);
 
     ngOnInit(): void {
         this.cargarProductos();
@@ -232,11 +242,19 @@ export class ProductosERPComponent implements OnInit {
             return;
         }
 
+        this.varianteSeleccionada.set(null);
+        this.mostrarModalCrearVariante.set(true);
+    }
+
+    editarVariante(variante: ResponseVarianteProducto): void {
+        this.errorVariantes.set('');
+        this.varianteSeleccionada.set(variante);
         this.mostrarModalCrearVariante.set(true);
     }
 
     cerrarModalCrearVariante(): void {
         this.mostrarModalCrearVariante.set(false);
+        this.varianteSeleccionada.set(null);
     }
 
     varianteCreada(): void {
@@ -248,7 +266,6 @@ export class ProductosERPComponent implements OnInit {
 
         this.cargarVariantes(producto.idProducto);
 
-        // Mantener abiertos ambos modales.
         this.mostrarModalVariantes.set(true);
         this.mostrarModalCrearVariante.set(true);
     }
@@ -269,5 +286,67 @@ export class ProductosERPComponent implements OnInit {
             (atributo) => atributo.idAtributo === idAtributo
         )?.valor ?? '—';
     }
+
+    solicitarEliminacionVariante(
+        variante: ResponseVarianteProducto
+    ): void {
+        this.errorVariantes.set('');
+
+        if (variante.esPrincipal) {
+            this.variantePorEliminar.set(null);
+            this.mostrarAvisoVariantePrincipal.set(true);
+            return;
+        }
+
+        this.mostrarAvisoVariantePrincipal.set(false);
+        this.variantePorEliminar.set(variante);
+    }
+
+
+    cancelarEliminacionVariante(): void {
+        if (!this.eliminandoVariante()) {
+            this.variantePorEliminar.set(null);
+        }
+    }
+
+    cerrarAvisoVariantePrincipal(): void {
+        this.mostrarAvisoVariantePrincipal.set(false);
+    }
+
+    confirmarEliminacionVariante(): void {
+        const variante = this.variantePorEliminar();
+        const producto = this.productoSeleccionado();
+
+        if (!variante || !producto || this.eliminandoVariante()) {
+            return;
+        }
+
+        this.eliminandoVariante.set(true);
+        this.errorVariantes.set('');
+
+        this.productosService
+            .eliminarVarianteProducto(variante.idVarianteProducto)
+            .pipe(
+                finalize(() => this.eliminandoVariante.set(false))
+            )
+            .subscribe({
+                next: () => {
+                    // Cerrar el modal de confirmación inmediatamente.
+                    this.variantePorEliminar.set(null);
+
+                    // Actualizar la lista de variantes.
+                    this.cargarVariantes(producto.idProducto);
+                },
+                error: (error) => {
+                    console.error('Error al eliminar la variante:', error);
+
+                    // Mantener el modal abierto para permitir reintentar.
+                    this.errorVariantes.set(
+                        'No fue posible eliminar la variante. Inténtalo nuevamente.'
+                    );
+                }
+            });
+    }
+
 
 }

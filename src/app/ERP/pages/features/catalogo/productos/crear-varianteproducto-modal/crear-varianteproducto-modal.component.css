@@ -1,4 +1,3 @@
-
 :host {
     --variant-primary: #6c3f8f;
     --variant-primary-dark: #512d6b;
@@ -13,6 +12,8 @@
     font-family: inherit;
     isolation: isolate;
 }
+
+/* ============ Modal principal ============ */
 
 .variant-create-backdrop {
     position: absolute;
@@ -40,7 +41,8 @@
     animation: variant-modal-in 150ms ease-out;
 }
 
-.variant-create-header {
+.variant-create-header,
+.modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -50,10 +52,12 @@
     border-bottom: 1px solid var(--variant-border);
 }
 
-.variant-create-header h2 {
+.variant-create-header h2,
+.modal-header h2 {
     margin: 0;
     font-size: 17px;
     font-weight: 600;
+    color: var(--variant-text);
 }
 
 .close-button {
@@ -91,7 +95,7 @@
     min-width: 0;
 }
 
-.variant-image-column > label:first-child,
+.variant-image-column>label:first-child,
 .attribute-field label,
 .form-field label {
     display: block;
@@ -100,6 +104,8 @@
     font-size: 12px;
     font-weight: 600;
 }
+
+/* ============ Imagen (crear) ============ */
 
 .image-upload-area {
     display: flex;
@@ -197,6 +203,77 @@
     color: var(--variant-primary-dark);
 }
 
+/* ============ Imagen (editar) ============ */
+
+.variant-current-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 190px;
+    margin: 0 0 10px;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid var(--variant-border);
+    border-radius: 6px;
+    background: #fff;
+}
+
+.variant-current-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.variant-no-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 190px;
+    margin: 0 0 10px;
+    padding: 16px;
+    box-sizing: border-box;
+    border: 1px dashed #cfc5d6;
+    border-radius: 6px;
+    background: #f8f7f9;
+    color: var(--variant-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.variant-no-image strong {
+    color: var(--variant-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.no-image-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: #f0e8f5;
+    color: var(--variant-primary);
+}
+
+/* Fix del input de stock que se salía del ancho */
+.attribute-field select,
+.form-field input:not([type="checkbox"]) {
+    box-sizing: border-box;
+}
+
+.variant-image-column>.secondary-button {
+    width: 100%;
+}
+
+/* ============ Atributos y detalles ============ */
+
 .variant-attributes-column h3,
 .variant-additional-details h3 {
     margin: 0 0 12px;
@@ -281,7 +358,10 @@
     accent-color: var(--variant-primary);
 }
 
-.variant-create-footer {
+/* ============ Footer y botones ============ */
+
+.variant-create-footer,
+.modal-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -330,6 +410,8 @@
     cursor: not-allowed;
 }
 
+/* ============ Mensajes y estados ============ */
+
 .message {
     margin-top: 14px;
     padding: 10px 12px;
@@ -370,6 +452,57 @@
     animation: variant-spin 700ms linear infinite;
 }
 
+/* ============ Modal secundario: cambiar imagen ============ */
+
+.variant-image-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background: rgba(35, 28, 39, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.variant-image-modal {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow: hidden;
+    background: #fff;
+    color: var(--variant-text);
+    border: 1px solid rgba(228, 223, 231, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 18px 50px rgba(35, 28, 39, 0.25);
+    animation: variant-modal-in 150ms ease-out;
+}
+
+.variant-image-modal-content {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.variant-image-modal-content>p {
+    margin: 0 0 18px;
+    color: var(--variant-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.variant-image-modal .image-upload-area {
+    min-height: 220px;
+}
+
+.variant-image-modal input[type="file"] {
+    display: none;
+}
+
+/* ============ Animaciones ============ */
+
 @keyframes variant-spin {
     to {
         transform: rotate(360deg);
@@ -388,6 +521,8 @@
     }
 }
 
+/* ============ Responsive ============ */
+
 @media (max-width: 620px) {
     .variant-create-backdrop {
         align-items: flex-start;
@@ -398,7 +533,8 @@
         max-height: calc(100vh - 20px);
     }
 
-    .variant-create-header {
+    .variant-create-header,
+    .modal-header {
         padding: 15px;
     }
 
@@ -415,7 +551,8 @@
         min-height: 150px;
     }
 
-    .variant-create-footer {
+    .variant-create-footer,
+    .modal-footer {
         padding: 12px 15px;
     }
 }

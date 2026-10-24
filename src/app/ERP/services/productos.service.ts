@@ -12,7 +12,7 @@ import {
     ResponseImagen
 } from '../interfaces/crear-producto.interface';
 
-import { CrearVarianteProductoRequest } from '../interfaces/crear-variante-producto.interface';
+import { CrearVarianteProductoRequest, ActualizarVarianteProductoRequest } from '../interfaces/crear-variante-producto.interface';
 import { ResponseValorAtributo } from '../interfaces/response-variante-producto.interface';
 
 import { ResponseVarianteProducto } from '../interfaces/response-variante-producto.interface';
@@ -137,10 +137,47 @@ export class ProductosService {
         );
     }
 
+    actualizarUrlImagenVariante(
+        idVarianteProducto: string,
+        urlImagen: string
+    ): Observable<string> {
+        return this.http.patch(
+            `${this.apiUrl}/variante-producto/actualizar/${encodeURIComponent(idVarianteProducto)}/urlImagen`,
+            null,
+            {
+                params: { urlImagen },
+                responseType: 'text'
+            }
+        );
+    }
+
     eliminarImagen(nombreImagen: string): Observable<void> {
         return this.http.delete<void>(
             `${this.apiUrl}/imagen/${encodeURIComponent(nombreImagen)}`
         );
     }
+
+
+    actualizarVarianteProducto(
+        idVarianteProducto: string,
+        idProducto: string,
+        request: ActualizarVarianteProductoRequest
+    ): Observable<string> {
+        return this.http.put(
+            `${this.apiUrl}/variante-producto/actualizar/${idVarianteProducto}/producto/${idProducto}`,
+            request,
+            { responseType: 'text' }
+        );
+    }
+
+    eliminarVarianteProducto(
+        idVarianteProducto: string
+    ): Observable<string> {
+        return this.http.delete(
+            `${this.apiUrl}/variante-producto/eliminar/${idVarianteProducto}`,
+            { responseType: 'text' }
+        );
+    }
+
 
 }

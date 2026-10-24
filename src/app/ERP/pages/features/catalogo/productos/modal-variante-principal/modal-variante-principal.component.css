@@ -1,0 +1,93 @@
+:host {
+    position: relative;
+    z-index: 1100;
+}
+
+.principal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgb(24 18 30 / 55%);
+    backdrop-filter: blur(3px);
+}
+
+.principal-modal {
+    width: 100%;
+    max-width: 430px;
+    padding: 1.75rem;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgb(0 0 0 / 20%);
+    text-align: center;
+    animation: aparecer 180ms ease-out;
+}
+
+.principal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.principal-modal h2 {
+    margin: 0 0 0.75rem;
+    color: #29212f;
+    font-size: 1.2rem;
+}
+
+.principal-modal p {
+    margin: 0;
+    color: #6b6470;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.principal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.principal-button {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 7px;
+    background: #70409a;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+.principal-button:hover {
+    background: #5c3280;
+}
+
+.principal-button:focus-visible {
+    outline: 3px solid #c4a5e5;
+    outline-offset: 3px;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

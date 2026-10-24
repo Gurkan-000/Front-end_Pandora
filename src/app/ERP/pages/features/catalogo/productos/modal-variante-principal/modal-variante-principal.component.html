@@ -1,0 +1,34 @@
+
+<div class="principal-backdrop" (click)="cerrarModal()">
+    <section
+        class="principal-modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="principal-modal-title"
+        aria-describedby="principal-modal-description"
+        (click)="$event.stopPropagation()"
+    >
+        <div class="principal-icon" aria-hidden="true">
+            !
+        </div>
+
+        <h2 id="principal-modal-title">
+            No se puede eliminar esta variante
+        </h2>
+
+        <p id="principal-modal-description">
+            La variante seleccionada es la variante principal del producto.
+            No puedes eliminarla mientras tenga esa condición.
+        </p>
+
+        <footer class="principal-footer">
+            <button
+                type="button"
+                class="principal-button"
+                (click)="cerrarModal()"
+            >
+                Entendido
+            </button>
+        </footer>
+    </section>
+</div>
