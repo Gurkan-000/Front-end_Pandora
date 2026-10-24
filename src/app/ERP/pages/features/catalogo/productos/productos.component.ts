@@ -14,11 +14,16 @@ import { CrearProductoModalComponent } from './crear-producto-modal/crear-produc
 import { ConfirmationDialogComponent } from '../../../../shared/confirmation-dialog/confirmation-dialog.component';
 import { ResponseAtributo } from '../../../../interfaces/crear-producto.interface';
 import { ResponseVarianteProducto } from '../../../../interfaces/response-variante-producto.interface';
+import { CrearVarianteProductoModalComponent } from './crear-varianteproducto-modal/crear-varianteproducto-modal.component';
 
 @Component({
     selector: 'app-productos-erp',
     standalone: true,
-    imports: [CrearProductoModalComponent, ConfirmationDialogComponent],
+    imports: [
+        CrearProductoModalComponent,
+        CrearVarianteProductoModalComponent,
+        ConfirmationDialogComponent
+    ],
     templateUrl: './productos.component.html',
     styleUrl: './productos.component.css'
 })
@@ -39,6 +44,8 @@ export class ProductosERPComponent implements OnInit {
     readonly atributosVariantes = signal<ResponseAtributo[]>([]);
     readonly cargandoVariantes = signal(false);
     readonly errorVariantes = signal('');
+
+    readonly mostrarModalCrearVariante = signal(false);
 
     ngOnInit(): void {
         this.cargarProductos();
@@ -74,33 +81,33 @@ export class ProductosERPComponent implements OnInit {
         this.productoSeleccionado.set(null);
     }
 
-    
+
     editarProducto(producto: ResponseProducto): void {
         this.error.set('');
         this.productoSeleccionado.set(producto);
         this.mostrarModalCrear.set(true);
     }
-    
+
     eliminarProducto(producto: ResponseProducto): void {
         this.productoPorEliminar.set(producto);
         this.error.set('');
     }
-    
+
     confirmarEliminacionProducto(): void {
         const producto = this.productoPorEliminar();
-        
+
         if (!producto || this.eliminandoProducto()) {
             return;
         }
-        
+
         this.eliminandoProducto.set(true);
         this.error.set('');
-        
+
         this.productosService
             .eliminarProducto(producto.idProducto)
             .pipe(
                 switchMap(() => {
-                    
+
                     this.productos.update((productosActuales) =>
                         productosActuales.filter(
                             (actual) =>
@@ -109,7 +116,7 @@ export class ProductosERPComponent implements OnInit {
                     );
 
                     this.productoPorEliminar.set(null);
-                    
+
                     const nombreImagen = producto.urlImagen
                         ?.split('/')
                         .pop();
@@ -117,21 +124,21 @@ export class ProductosERPComponent implements OnInit {
                     if (!nombreImagen) {
                         return of(true);
                     }
-                    
+
                     return this.productosService
-                    .eliminarImagen(nombreImagen)
-                    .pipe(
-                        map(() => true),
+                        .eliminarImagen(nombreImagen)
+                        .pipe(
+                            map(() => true),
                             catchError((error) => {
                                 if (error.status === 404) {
                                     return of(true);
                                 }
-                                
+
                                 console.error(
                                     'El producto se eliminó, pero no se pudo eliminar su imagen:',
                                     error
                                 );
-                                
+
                                 return of(false);
                             })
                         );
@@ -148,38 +155,38 @@ export class ProductosERPComponent implements OnInit {
                 },
                 error: (error) => {
                     console.error('Error al eliminar producto:', error);
-                    
+
                     const mensajeBackend = error?.error?.mensaje;
 
                     this.error.set(
                         typeof mensajeBackend === 'string'
-                        ? mensajeBackend
+                            ? mensajeBackend
                             : error.status === 404
-                            ? 'El producto no existe o ya fue eliminado.'
-                            : 'No fue posible eliminar el producto. Inténtalo nuevamente.'
-                        );
-                    }
-                });
+                                ? 'El producto no existe o ya fue eliminado.'
+                                : 'No fue posible eliminar el producto. Inténtalo nuevamente.'
+                    );
+                }
+            });
     }
-    
+
     cancelarEliminacionProducto(): void {
         if (!this.eliminandoProducto()) {
             this.productoPorEliminar.set(null);
         }
     }
-    
+
     verVariantes(producto: ResponseProducto): void {
         this.productoSeleccionado.set(producto);
         this.mostrarModalVariantes.set(true);
         this.cargarVariantes(producto.idProducto);
     }
-    
+
     cargarVariantes(idProducto: string): void {
         this.cargandoVariantes.set(true);
         this.errorVariantes.set('');
         this.variantes.set([]);
         this.atributosVariantes.set([]);
-        
+
         let variantesCargadas = false;
         let atributosCargados = false;
 
@@ -220,7 +227,34 @@ export class ProductosERPComponent implements OnInit {
         });
     }
 
+    abrirModalCrearVariante(): void {
+        if (!this.productoSeleccionado()) {
+            return;
+        }
+
+        this.mostrarModalCrearVariante.set(true);
+    }
+
+    cerrarModalCrearVariante(): void {
+        this.mostrarModalCrearVariante.set(false);
+    }
+
+    varianteCreada(): void {
+        const producto = this.productoSeleccionado();
+
+        if (!producto) {
+            return;
+        }
+
+        this.cargarVariantes(producto.idProducto);
+
+        // Mantener abiertos ambos modales.
+        this.mostrarModalVariantes.set(true);
+        this.mostrarModalCrearVariante.set(true);
+    }
+
     cerrarModalVariantes(): void {
+        this.mostrarModalCrearVariante.set(false);
         this.mostrarModalVariantes.set(false);
         this.variantes.set([]);
         this.atributosVariantes.set([]);

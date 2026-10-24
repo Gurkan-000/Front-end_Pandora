@@ -1,0 +1,421 @@
+
+:host {
+    --variant-primary: #6c3f8f;
+    --variant-primary-dark: #512d6b;
+    --variant-border: #e4dfe7;
+    --variant-text: #29232d;
+    --variant-muted: #756d79;
+
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: block;
+    font-family: inherit;
+    isolation: isolate;
+}
+
+.variant-create-backdrop {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+    background: rgba(35, 28, 39, 0.48);
+    backdrop-filter: blur(2px);
+}
+
+.variant-create-modal {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 760px);
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+    background: #fff;
+    color: var(--variant-text);
+    border: 1px solid rgba(228, 223, 231, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 18px 50px rgba(35, 28, 39, 0.2);
+    animation: variant-modal-in 150ms ease-out;
+}
+
+.variant-create-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 17px 20px;
+    background: #f0e8f5;
+    border-bottom: 1px solid var(--variant-border);
+}
+
+.variant-create-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.close-button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--variant-muted);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    background: rgba(108, 63, 143, 0.09);
+    color: var(--variant-primary-dark);
+}
+
+.variant-create-content {
+    padding: 22px;
+    overflow-y: auto;
+}
+
+.variant-create-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 22px;
+}
+
+.variant-image-column,
+.variant-attributes-column {
+    min-width: 0;
+}
+
+.variant-image-column > label:first-child,
+.attribute-field label,
+.form-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--variant-text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.image-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 190px;
+    padding: 12px;
+    border: 1px dashed #cfc5d6;
+    border-radius: 6px;
+    background: #f8f7f9;
+    color: var(--variant-muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 140ms ease, background 140ms ease;
+}
+
+.image-upload-area:hover {
+    border-color: var(--variant-primary);
+    background: #f5f0f8;
+}
+
+.image-upload-area.has-image {
+    border-style: solid;
+    border-color: var(--variant-border);
+    background: #fff;
+}
+
+.image-upload-area img {
+    display: block;
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+}
+
+.upload-icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #d8cfe0;
+    border-radius: 50%;
+    color: var(--variant-primary);
+    font-size: 23px;
+    font-weight: 300;
+}
+
+#variant-image {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+.selected-image {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 9px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.remove-image-button {
+    flex-shrink: 0;
+    padding: 4px 7px;
+    border: 1px solid var(--variant-border);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--variant-primary-dark);
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.image-recommendation {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+    padding: 11px 12px;
+    border: 1px solid var(--variant-border);
+    border-radius: 6px;
+    background: #faf8fc;
+    color: var(--variant-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.image-recommendation strong {
+    color: var(--variant-primary-dark);
+}
+
+.variant-attributes-column h3,
+.variant-additional-details h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.attribute-list {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.attribute-field select,
+.form-field input {
+    display: block;
+    width: 100%;
+    min-height: 37px;
+    padding: 8px 10px;
+    border: 1px solid #d9d3de;
+    border-radius: 5px;
+    background: #fff;
+    color: var(--variant-text);
+    font: inherit;
+    font-size: 12px;
+}
+
+.attribute-field select:focus,
+.form-field input:focus {
+    outline: 2px solid rgba(108, 63, 143, 0.15);
+    border-color: var(--variant-primary);
+}
+
+.attribute-field select:disabled,
+.form-field input:disabled,
+.form-field input:read-only {
+    background: #f7f5f8;
+    cursor: not-allowed;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 5px;
+    color: #9a5a42;
+    font-size: 11px;
+}
+
+.empty-attributes {
+    padding: 12px;
+    border: 1px solid var(--variant-border);
+    border-radius: 5px;
+    background: #faf8fc;
+    color: var(--variant-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.variant-additional-details {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #eee9f1;
+}
+
+.form-field {
+    max-width: 100%;
+}
+
+.principal-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 13px;
+    color: var(--variant-text);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.principal-checkbox input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--variant-primary);
+}
+
+.variant-create-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    padding: 14px 20px;
+    border-top: 1px solid #eee9f1;
+    background: #fcfbfd;
+}
+
+.primary-button,
+.secondary-button {
+    min-height: 35px;
+    padding: 8px 13px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 140ms ease, opacity 140ms ease;
+}
+
+.primary-button {
+    border: 1px solid var(--variant-primary);
+    background: var(--variant-primary);
+    color: #fff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background: var(--variant-primary-dark);
+}
+
+.secondary-button {
+    border: 1px solid #d9d3de;
+    background: #fff;
+    color: var(--variant-text);
+}
+
+.secondary-button:hover:not(:disabled) {
+    background: #f5f2f7;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.close-button:disabled,
+.remove-image-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.message.error {
+    border: 1px solid #f0d2d2;
+    background: #fff5f5;
+    color: #8f3030;
+}
+
+.message.success {
+    border: 1px solid #cfe7d8;
+    background: #f1faf4;
+    color: #286b45;
+}
+
+.variant-create-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 180px;
+    padding: 24px;
+    color: var(--variant-muted);
+    font-size: 13px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ded5e6;
+    border-top-color: var(--variant-primary);
+    border-radius: 50%;
+    animation: variant-spin 700ms linear infinite;
+}
+
+@keyframes variant-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes variant-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(5px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 620px) {
+    .variant-create-backdrop {
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .variant-create-modal {
+        max-height: calc(100vh - 20px);
+    }
+
+    .variant-create-header {
+        padding: 15px;
+    }
+
+    .variant-create-content {
+        padding: 15px;
+    }
+
+    .variant-create-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .image-upload-area {
+        min-height: 150px;
+    }
+
+    .variant-create-footer {
+        padding: 12px 15px;
+    }
+}

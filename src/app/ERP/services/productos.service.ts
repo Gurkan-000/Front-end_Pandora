@@ -12,6 +12,9 @@ import {
     ResponseImagen
 } from '../interfaces/crear-producto.interface';
 
+import { CrearVarianteProductoRequest } from '../interfaces/crear-variante-producto.interface';
+import { ResponseValorAtributo } from '../interfaces/response-variante-producto.interface';
+
 import { ResponseVarianteProducto } from '../interfaces/response-variante-producto.interface';
 
 @Injectable({
@@ -25,6 +28,24 @@ export class ProductosService {
     listarProductos(): Observable<ResponseProducto[]> {
         return this.http.get<ResponseProducto[]>(
             `${this.apiUrl}/producto/listar`
+        );
+    }
+
+    listarValoresAtributo(
+        idAtributo: string
+    ): Observable<ResponseValorAtributo[]> {
+        return this.http.get<ResponseValorAtributo[]>(
+            `${this.apiUrl}/valor-atributo/listar/atributo/${encodeURIComponent(idAtributo)}`
+        );
+    }
+
+    crearVarianteProducto(
+        idProducto: string,
+        request: CrearVarianteProductoRequest
+    ): Observable<unknown> {
+        return this.http.post<unknown>(
+            `${this.apiUrl}/variante-producto/crear/${encodeURIComponent(idProducto)}`,
+            request
         );
     }
 
