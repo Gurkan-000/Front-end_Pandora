@@ -264,11 +264,21 @@
         </div>
 
         <footer class="variants-modal-footer">
-            <button type="button" class="create-product-button" disabled title="Crear variantes próximamente">
+            <button type="button" class="create-product-button"
+                [disabled]="cargandoVariantes() || !productoSeleccionado()" (click)="abrirModalCrearVariante()">
                 <span aria-hidden="true">+</span>
                 Crear variante
             </button>
         </footer>
     </section>
 </div>
+}
+
+@if (mostrarModalCrearVariante() && productoSeleccionado()) {
+    <app-crear-varianteproducto-modal
+        [idProducto]="productoSeleccionado()!.idProducto"
+        [cantidadVariantes]="variantes().length"
+        (cerrar)="cerrarModalCrearVariante()"
+        (varianteCreada)="varianteCreada()"
+    />
 }

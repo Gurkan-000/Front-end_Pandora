@@ -1,0 +1,228 @@
+
+<div class="variant-create-backdrop" (click)="cerrarModal()">
+    <section
+        class="variant-create-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="variant-modal-title"
+        (click)="$event.stopPropagation()"
+    >
+        <header class="variant-create-header">
+            <h2 id="variant-modal-title">Crear Nueva Variante</h2>
+
+            <button
+                type="button"
+                class="close-button"
+                aria-label="Cerrar modal"
+                [disabled]="creandoVariante()"
+                (click)="cerrarModal()"
+            >
+                ×
+            </button>
+        </header>
+
+        @if (cargandoAtributos()) {
+            <div class="variant-create-state" role="status">
+                <span class="spinner"></span>
+                Cargando atributos y valores...
+            </div>
+        } @else if (errorCarga()) {
+            <div class="variant-create-content">
+                <div class="message error" role="alert">
+                    {{ errorCarga() }}
+                </div>
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    (click)="cargarAtributosYValores()"
+                >
+                    Reintentar
+                </button>
+            </div>
+        } @else {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="enviarFormulario()"
+                novalidate
+            >
+                <div class="variant-create-content">
+                    <div class="variant-create-grid">
+                        <div class="variant-image-column">
+                            <label for="variant-image">
+                                Imagen de la variante (opcional)
+                            </label>
+
+                            <label
+                                class="image-upload-area"
+                                for="variant-image"
+                                [class.has-image]="imagenPrevisualizacion()"
+                            >
+                                @if (imagenPrevisualizacion()) {
+                                    <img
+                                        [src]="imagenPrevisualizacion()"
+                                        alt="Vista previa de la variante"
+                                    />
+                                } @else {
+                                    <span class="upload-icon" aria-hidden="true">
+                                        +
+                                    </span>
+                                    <span>Subir imagen</span>
+                                }
+                            </label>
+
+                            <input
+                                id="variant-image"
+                                type="file"
+                                accept="image/*"
+                                (change)="seleccionarImagen($event)"
+                                [disabled]="creandoVariante()"
+                            />
+
+                            @if (archivoImagen()) {
+                                <div class="selected-image">
+                                    <span>{{ archivoImagen()?.name }}</span>
+
+                                    <button
+                                        type="button"
+                                        class="remove-image-button"
+                                        (click)="quitarImagen()"
+                                        [disabled]="creandoVariante()"
+                                    >
+                                        Quitar imagen
+                                    </button>
+                                </div>
+                            }
+
+                            <div class="image-recommendation">
+                                <strong>Nota:</strong>
+                                <span>
+                                    Puedes dejar este campo vacío si la variante
+                                    utilizará la imagen del producto principal.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="variant-attributes-column">
+                            <h3>Atributos de Variante</h3>
+
+                            @if (atributosConValores().length === 0) {
+                                <p class="empty-attributes">
+                                    Este producto no tiene atributos configurados.
+                                </p>
+                            } @else {
+                                <div class="attribute-list">
+                                    @for (
+                                        item of atributosConValores();
+                                        track item.atributo.idAtributo
+                                    ) {
+                                        <div class="attribute-field">
+                                            <label
+                                                [for]="'attribute-' + item.atributo.idAtributo"
+                                            >
+                                                {{ item.atributo.nombreAtributo }}
+                                            </label>
+
+                                            <select
+                                                [id]="'attribute-' + item.atributo.idAtributo"
+                                                [value]="valoresSeleccionados()[item.atributo.idAtributo] ?? ''"
+                                                (change)="seleccionarValor(
+                                                    item.atributo.idAtributo,
+                                                    $any($event.target).value
+                                                )"
+                                                [disabled]="creandoVariante()"
+                                            >
+                                                <option value="">
+                                                    Seleccionar valor
+                                                </option>
+
+                                                @for (
+                                                    valor of item.valores;
+                                                    track valor.idValorAtributo
+                                                ) {
+                                                    <option
+                                                        [value]="valor.idValorAtributo"
+                                                    >
+                                                        {{ valor.valor }}
+                                                    </option>
+                                                }
+                                            </select>
+
+                                            @if (item.valores.length === 0) {
+                                                <small class="field-hint">
+                                                    Este atributo no tiene valores registrados.
+                                                </small>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <section class="variant-additional-details">
+                        <h3>Detalles Adicionales</h3>
+
+                        <div class="form-field">
+                            <label for="variant-stock">Stock</label>
+
+                            <input
+                                id="variant-stock"
+                                type="number"
+                                min="0"
+                                step="1"
+                                formControlName="stock"
+                                [readonly]="creandoVariante()"
+                            />
+                        </div>
+
+                        <label class="principal-checkbox">
+                            <input
+                                type="checkbox"
+                                formControlName="esPrincipal"
+                                [attr.disabled]="creandoVariante() ? true : null"
+                            />
+
+                            <span>Es Variante Principal</span>
+                        </label>
+                    </section>
+
+                    @if (errorFormulario()) {
+                        <div class="message error" role="alert">
+                            {{ errorFormulario() }}
+                        </div>
+                    }
+
+                    @if (mensajeExito()) {
+                        <div class="message success" role="status">
+                            {{ mensajeExito() }}
+                        </div>
+                    }
+                </div>
+
+                <footer class="variant-create-footer">
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        [disabled]="creandoVariante()"
+                        (click)="cerrarModal()"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        [disabled]="creandoVariante() || cargandoAtributos()"
+                    >
+                        @if (creandoVariante()) {
+                            Creando...
+                        } @else {
+                            Crear Variante
+                        }
+                    </button>
+                </footer>
+            </form>
+        }
+    </section>
+</div>
