@@ -1,0 +1,102 @@
+<div class="catalog-page">
+    <nav class="breadcrumbs" aria-label="Ruta de navegación">
+        <a href="/productos">Inicio</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Todos los productos</span>
+    </nav>
+
+    <section class="catalog-hero" aria-labelledby="catalog-title">
+        <div class="hero-copy">
+            <p class="eyebrow">La selección Pandora</p>
+            <h1 id="catalog-title">Pequeños hallazgos.<br>Grandes favoritos.</h1>
+            <p class="hero-description">Ideas útiles, diseño cuidado y novedades para disfrutar cada día.</p>
+            <a class="hero-link" href="#products">Explorar productos <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="hero-photo" role="img" aria-label="Selección de objetos de diseño para el hogar">
+            <img ngSrc="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1200&q=85"
+                fill priority alt="">
+        </div>
+        <div class="hero-note"><span class="note-dot"></span> Selección de temporada</div>
+    </section>
+
+    <section class="catalog-section" id="products" aria-labelledby="products-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Encuentra tu próximo favorito</p>
+                <h2 id="products-title">Explora el catálogo</h2>
+            </div>
+            <span class="result-count">{{ filteredProducts().length }} productos</span>
+        </div>
+
+        <div class="catalog-toolbar">
+            <label class="catalog-search">
+                <span class="visually-hidden">Buscar en el catálogo</span>
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input type="search" placeholder="Busca por producto, marca o categoría" [value]="searchTerm()"
+                    (input)="setSearchTerm($event)">
+                @if (searchTerm()) {
+                <button type="button" class="clear-search" (click)="searchTerm.set('')" aria-label="Limpiar búsqueda">×</button>
+                }
+            </label>
+            <label class="sort-control">
+                <span>Ordenar por</span>
+                <select [value]="sortOrder()" (change)="setSortOrder($event)">
+                    <option value="recommended">Recomendados</option>
+                    <option value="price-asc">Precio: menor a mayor</option>
+                    <option value="price-desc">Precio: mayor a menor</option>
+                    <option value="rating">Mejor valorados</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="catalog-layout">
+            <aside class="filters" aria-label="Filtros del catálogo">
+                <div class="filter-heading">
+                    <h3>Categorías</h3>
+                    <span aria-hidden="true">⌄</span>
+                </div>
+                <div class="category-options">
+                    @for (category of categories(); track category) {
+                    <button type="button" class="category-option" [class.category-selected]="selectedCategory() === category"
+                        [attr.aria-pressed]="selectedCategory() === category" (click)="selectCategory(category)">
+                        <span>{{ category }}</span>
+                        @if (category === 'Todas') {
+                        <span class="category-total">{{ products().length }}</span>
+                        }
+                    </button>
+                    }
+                </div>
+                <div class="filter-divider"></div>
+                <h3 class="availability-title">Disponibilidad</h3>
+                <label class="stock-filter">
+                    <input type="checkbox" [checked]="onlyInStock()" (change)="toggleAvailability($event)">
+                    <span>Mostrar disponibles</span>
+                </label>
+                <div class="filter-promise">
+                    <span class="promise-icon" aria-hidden="true">✦</span>
+                    <span>Compra protegida y devoluciones fáciles</span>
+                </div>
+            </aside>
+
+            <div class="product-area">
+                @if (filteredProducts().length) {
+                <div class="product-grid">
+                    @for (product of filteredProducts(); track product.idProducto) {
+                    <app-product-card [product]="product" [favorite]="favorites().includes(product.idProducto)"
+                        (favoriteToggled)="toggleFavorite($event)" (addRequested)="addToCart($event)" />
+                    }
+                </div>
+                } @else {
+                <div class="empty-state">
+                    <span class="empty-icon" aria-hidden="true">⌕</span>
+                    <h3>No encontramos productos</h3>
+                    <p>Prueba otra búsqueda o cambia los filtros para ver más opciones.</p>
+                    <button type="button" (click)="searchTerm.set(''); selectedCategory.set('Todas'); onlyInStock.set(false)">
+                        Limpiar filtros
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,42 @@
+<article class="product-card">
+    <div class="product-image-wrap">
+        <img class="product-image" [ngSrc]="product().urlImagen" width="600" height="600"
+            [alt]="product().nombreProducto" loading="lazy">
+        @if (product().badge) {
+        <span class="product-badge">{{ product().badge }}</span>
+        }
+        <button class="favorite-button" type="button" [class.favorite-active]="favorite()"
+            [attr.aria-label]="favorite() ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+            [attr.aria-pressed]="favorite()" (click)="favoriteToggled.emit(product().idProducto)">
+            <span aria-hidden="true">{{ favorite() ? '♥' : '♡' }}</span>
+        </button>
+    </div>
+    <div class="product-info">
+        <div class="product-brand-row">
+            <span class="product-brand">{{ product().nombreMarca }}</span>
+            @if (product().rating !== undefined) {
+            <span class="rating"><span aria-hidden="true">★</span> {{ product().rating }}</span>
+            }
+        </div>
+        <h3>{{ product().nombreProducto }}</h3>
+        <p class="product-description">{{ product().descripcion }}</p>
+        @if (product().reviews !== undefined) {
+        <div class="product-review-count">{{ product().reviews }} opiniones</div>
+        }
+        <div class="price-row">
+            <span class="current-price">{{ product().precio | currency:'USD':'symbol':'1.2-2' }}</span>
+            @if (product().precioAnterior) {
+            <span class="previous-price">{{ product().precioAnterior | currency:'USD':'symbol':'1.2-2' }}</span>
+            }
+        </div>
+        <p class="delivery-note">Envío gratis en productos seleccionados</p>
+        <button class="add-button" type="button" [disabled]="product().stock === 0"
+            (click)="addRequested.emit(product())">
+            @if (product().stock > 0) {
+            <span aria-hidden="true">＋</span> Añadir al carrito
+            } @else {
+            Agotado
+            }
+        </button>
+    </div>
+</article>

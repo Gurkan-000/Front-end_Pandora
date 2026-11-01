@@ -8,6 +8,7 @@ import { DashboardERPComponent } from './ERP/pages/dashboard/dashboard.component
 import { erpGuard } from './core/guards/erp.guard';
 import { erpLoginGuard } from './core/guards/erp-login.guard';
 
+import { MainLayoutComponent } from './E-Commerce/layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
     {
@@ -79,6 +80,22 @@ export const routes: Routes = [
     {
         path: 'recuperar-contrasena',
         component: RecuperarContrasenaComponent
+    },
+    {
+        path: 'productos',
+        component: MainLayoutComponent,
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./E-Commerce/pages/catalogo/catalogo.component')
+                    .then((module) => module.CatalogoComponent)
+            }
+        ]
+    },
+    {
+        path: 'catalogo',
+        redirectTo: 'productos',
+        pathMatch: 'full'
     },
     {
         path: '',
