@@ -44,7 +44,6 @@
                     <option value="recommended">Recomendados</option>
                     <option value="price-asc">Precio: menor a mayor</option>
                     <option value="price-desc">Precio: mayor a menor</option>
-                    <option value="rating">Mejor valorados</option>
                 </select>
             </label>
         </div>
@@ -79,7 +78,14 @@
             </aside>
 
             <div class="product-area">
-                @if (filteredProducts().length) {
+                @if (loading()) {
+                <div class="catalog-state" role="status">Cargando productos...</div>
+                } @else if (loadError()) {
+                <div class="catalog-state catalog-error" role="alert">
+                    <p>{{ loadError() }}</p>
+                    <button type="button" (click)="loadProducts()">Reintentar</button>
+                </div>
+                } @else if (filteredProducts().length) {
                 <div class="product-grid">
                     @for (product of filteredProducts(); track product.idProducto) {
                     <app-product-card [product]="product" [favorite]="favorites().includes(product.idProducto)"

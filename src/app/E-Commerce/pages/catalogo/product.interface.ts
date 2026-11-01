@@ -6,10 +6,26 @@ export interface Product {
     nombreCategoria: string;
     nombreSubcategoria: string;
     precio: number;
-    precioAnterior?: number;
     urlImagen: string;
     stock: number;
-    rating?: number;
-    reviews?: number;
-    badge?: string;
+}
+
+export interface ProductApiResponse {
+    idProducto: string;
+    idSubCategoria: string;
+    nombreProducto: string;
+    descripcion: string;
+    precio: number;
+    urlImagen: string;
+    nombreMarca: string;
+    nombreSubcategoria: string;
+}
+
+export interface ProductSubcategoryResponse {
+    idSubCategoria: string;
+    nombreCategoria: string;
+}
+
+export interface ProductVariantResponse {
+    stock: number;
 }

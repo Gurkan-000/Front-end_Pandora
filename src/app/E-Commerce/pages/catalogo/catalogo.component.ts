@@ -1,13 +1,14 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
 import { ProductApiService } from '../../../core/services/product-api.service';
 import { Product } from './product.interface';
 import { ProductCardComponent } from './product-card.component';
 
-type ProductSort = 'recommended' | 'price-asc' | 'price-desc' | 'rating';
+type ProductSort = 'recommended' | 'price-asc' | 'price-desc';
 
 @Component({
     selector: 'app-catalogo',
@@ -15,11 +16,13 @@ type ProductSort = 'recommended' | 'price-asc' | 'price-desc' | 'rating';
     templateUrl: './catalogo.component.html',
     styleUrl: './catalogo.component.css'
 })
-export class CatalogoComponent {
+export class CatalogoComponent implements OnInit {
     private readonly productApi = inject(ProductApiService);
     private readonly route = inject(ActivatedRoute);
 
-    protected readonly products = toSignal(this.productApi.getProducts(), { initialValue: [] });
+    protected readonly products = signal<Product[]>([]);
+    protected readonly loading = signal(true);
+    protected readonly loadError = signal('');
     protected readonly searchTerm = signal('');
     protected readonly selectedCategory = signal('Todas');
     protected readonly onlyInStock = signal(false);
@@ -31,6 +34,28 @@ export class CatalogoComponent {
             this.searchTerm.set(params.get('q') ?? '');
         });
     }
+
+    ngOnInit(): void {
+        this.loadProducts();
+    }
+
+    protected loadProducts(): void {
+        this.loading.set(true);
+        this.loadError.set('');
+
+        this.productApi.getProducts().pipe(
+            finalize(() => this.loading.set(false))
+        ).subscribe({
+            next: (products) => this.products.set(products),
+            error: (error: unknown) => {
+                console.error('Error al cargar productos de la tienda:', error);
+                this.loadError.set(
+                    'No fue posible cargar los productos. Inténtalo nuevamente.'
+                );
+            }
+        });
+    }
+
     protected readonly categories = computed(() => [
         'Todas',
         ...new Set(this.products().map((product) => product.nombreCategoria))
@@ -57,8 +82,6 @@ export class CatalogoComponent {
                     return first.precio - second.precio;
                 case 'price-desc':
                     return second.precio - first.precio;
-                case 'rating':
-                    return (second.rating ?? 0) - (first.rating ?? 0);
                 default:
                     return 0;
             }
