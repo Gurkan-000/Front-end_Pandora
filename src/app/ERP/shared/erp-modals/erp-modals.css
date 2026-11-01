@@ -1,0 +1,126 @@
+app-erp-layout :is(
+    .modal-backdrop,
+    .image-modal-backdrop,
+    .variant-create-backdrop,
+    .variant-image-modal-backdrop,
+    .variants-modal-backdrop,
+    .principal-backdrop,
+    .dialog-backdrop
+) {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+app-erp-layout :is(
+    .modal-backdrop,
+    .image-modal-backdrop,
+    .variant-create-backdrop,
+    .variant-image-modal-backdrop,
+    .variants-modal-backdrop,
+    .principal-backdrop
+) {
+    align-items: safe center;
+}
+
+app-erp-layout .dialog-backdrop {
+    place-items: safe center;
+}
+
+app-erp-layout :is(
+    .product-modal,
+    .image-modal,
+    .variant-create-modal,
+    .variant-image-modal,
+    .variants-modal,
+    .related-modal,
+    .principal-modal,
+    .confirmation-dialog,
+    .modal-content,
+    .variant-create-content,
+    .variant-image-modal-content,
+    .variants-modal-content
+) {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+app-erp-layout .product-modal {
+    max-height: calc(100dvh - 48px);
+}
+
+app-erp-layout .product-modal > form,
+app-erp-layout .variant-create-modal > form {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+}
+
+app-erp-layout .product-modal .modal-content,
+app-erp-layout .variant-create-content,
+app-erp-layout .variants-modal-content {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+app-erp-layout :is(.modal-header, .variant-create-header, .modal-footer, .variant-create-footer) {
+    flex-shrink: 0;
+}
+
+app-erp-layout .image-modal {
+    max-height: calc(100dvh - 40px);
+}
+
+app-erp-layout .variant-create-modal {
+    max-height: calc(100dvh - 48px);
+}
+
+app-erp-layout .variant-image-modal {
+    max-height: calc(100dvh - 32px);
+}
+
+app-erp-layout .variants-modal {
+    max-height: calc(100dvh - 48px);
+}
+
+app-erp-layout .related-modal {
+    max-height: calc(100dvh - 48px);
+}
+
+app-erp-layout .principal-modal {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+}
+
+app-erp-layout .confirmation-dialog {
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    app-erp-layout :is(
+        .modal-backdrop,
+        .image-modal-backdrop,
+        .variant-create-backdrop,
+        .variant-image-modal-backdrop,
+        .variants-modal-backdrop,
+        .principal-backdrop,
+        .dialog-backdrop,
+        .product-modal,
+        .image-modal,
+        .variant-create-modal,
+        .variant-image-modal,
+        .variants-modal,
+        .related-modal,
+        .principal-modal,
+        .confirmation-dialog,
+        .modal-content,
+        .variant-create-content,
+        .variant-image-modal-content,
+        .variants-modal-content
+    ) {
+        scroll-behavior: auto;
+    }
+}
