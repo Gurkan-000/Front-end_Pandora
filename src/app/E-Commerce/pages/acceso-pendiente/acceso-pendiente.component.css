@@ -1,0 +1,124 @@
+:host {
+    display: block;
+    --pending-ink: #172a27;
+    --pending-muted: #64736d;
+    --pending-line: #e2e8e3;
+}
+
+.pending-page {
+    min-height: 550px;
+    padding: 28px 20px 70px;
+}
+
+.pending-card {
+    width: 100%;
+    max-width: 850px;
+    min-height: 430px;
+    margin: 0 auto;
+    padding: 26px;
+    border: 1px solid var(--pending-line);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--pending-muted);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: var(--pending-ink);
+}
+
+.pending-content {
+    max-width: 480px;
+    margin: 52px auto 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.pending-icon {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--pending-ink);
+    background: #edf2ee;
+}
+
+.pending-icon svg {
+    width: 35px;
+    height: 35px;
+}
+
+.pending-label {
+    color: #a47a2e;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.pending-content h1 {
+    margin: 12px 0;
+    color: var(--pending-ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(30px, 4vw, 42px);
+    font-weight: 500;
+}
+
+.pending-description {
+    margin: 0;
+    color: var(--pending-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.pending-notice {
+    width: 100%;
+    margin: 25px 0;
+    padding: 14px;
+    border: 1px solid var(--pending-line);
+    border-radius: 5px;
+    color: var(--pending-muted);
+    background: #f8faf8;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.catalog-button {
+    min-height: 43px;
+    padding: 0 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #fff;
+    background: #24443b;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 140ms ease;
+}
+
+.catalog-button:hover {
+    background: #172a27;
+}
+
+@media (max-width: 620px) {
+    .pending-card {
+        padding: 18px;
+    }
+
+    .pending-content {
+        margin-top: 42px;
+    }
+}

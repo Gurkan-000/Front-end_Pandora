@@ -257,7 +257,7 @@
     font-size: 14px;
 }
 
-.filter-heading > span {
+.filter-heading>span {
     color: var(--catalog-muted);
 }
 
@@ -304,25 +304,6 @@
     height: 1px;
     margin: 21px 0;
     background: var(--catalog-line);
-}
-
-.availability-title {
-    margin-bottom: 13px !important;
-}
-
-.stock-filter {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    color: #52645d;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.stock-filter input {
-    width: 16px;
-    height: 16px;
-    accent-color: #24443b;
 }
 
 .filter-promise {
@@ -530,7 +511,7 @@
         border-bottom: 1px solid var(--catalog-line);
     }
 
-    .filter-heading > span {
+    .filter-heading>span {
         display: none;
     }
 
@@ -557,8 +538,6 @@
 
     .category-total,
     .filter-divider,
-    .availability-title,
-    .stock-filter,
     .filter-promise {
         display: none;
     }

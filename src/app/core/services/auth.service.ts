@@ -1,6 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, catchError, switchMap, tap, throwError } from 'rxjs';
+import {
+    Observable,
+    catchError,
+    map,
+    of,
+    switchMap,
+    tap,
+    throwError
+} from 'rxjs';
 
 import { LoginRequest } from '../interfaces/login-request.interface';
 import { RegisterRequest } from '../interfaces/register-request.interface';
@@ -76,6 +84,17 @@ export class AuthService {
         );
     }
 
+    validarSesion(): Observable<boolean> {
+
+        return this.obtenerSesion().pipe(
+            map(() => true),
+            catchError(() => {
+                this.limpiarSesionLocal();
+                return of(false);
+            })
+        );
+    }
+
 
     limpiarSesionLocal(): void {
         this.usuarioActualSignal.set(null);
@@ -93,6 +112,10 @@ export class AuthService {
             {
                 withCredentials: true
             }
+        ).pipe(
+            tap(usuario => {
+                this.usuarioActualSignal.set(usuario);
+            })
         );
     }
 
@@ -120,6 +143,10 @@ export class AuthService {
                 withCredentials: true,
                 responseType: 'text'
             }
+        ).pipe(
+            tap(() => {
+                this.limpiarSesionLocal();
+            })
         );
     }
 

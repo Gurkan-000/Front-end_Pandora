@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { AuthService } from '../../../core/services/auth.service';
@@ -17,6 +18,7 @@ export class LoginCommerceComponent {
     private readonly formBuilder = inject(FormBuilder);
     private readonly authService = inject(AuthService);
     private readonly changeDetectorRef = inject(ChangeDetectorRef);
+    private readonly router = inject(Router);
 
     modoRegistro = false;
 
@@ -133,13 +135,14 @@ export class LoginCommerceComponent {
             this.loginForm.getRawValue()
         ).subscribe({
 
-            next: (response) => {
+            next: () => {
 
                 this.cargando = false;
 
-                console.log('Login correcto');
-                console.log('Rol:', response.rol);
-                
+                // El AuthService ya actualizó usuarioActual.
+                // Ahora enviamos al usuario al catálogo.
+                void this.router.navigate(['/productos']);
+
                 this.changeDetectorRef.detectChanges();
             },
 

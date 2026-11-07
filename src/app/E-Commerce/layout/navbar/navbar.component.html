@@ -1,51 +1,288 @@
 <header class="site-header">
+
     <div class="service-bar">
-        <p>Envío gratis en pedidos seleccionados <span>·</span> Ofertas nuevas cada semana</p>
-        <a routerLink="/productos">Descubre la tienda</a>
+
+        <p>
+            Envío gratis en pedidos seleccionados
+            <span>·</span>
+            Ofertas nuevas cada semana
+        </p>
+
+        <a routerLink="/productos">
+            Descubre la tienda
+        </a>
+
     </div>
 
     <div class="main-bar">
-        <a class="brand" routerLink="/productos" aria-label="Pandora, inicio de la tienda">
+
+        <a class="brand"
+            routerLink="/productos"
+            aria-label="Pandora, inicio de la tienda">
+
             <span class="brand-mark" aria-hidden="true">P</span>
+
             <span>Pandora</span>
+
         </a>
 
-        <form class="search" role="search" (submit)="submitSearch($event)">
-            <label class="visually-hidden" for="store-search">Buscar productos</label>
-            <input id="store-search" name="q" type="search" placeholder="¿Qué estás buscando?"
-                [value]="searchTerm()" (input)="updateSearch($event)">
+        <form class="search"
+            role="search"
+            (submit)="submitSearch($event)">
+
+            <label class="visually-hidden" for="store-search">
+                Buscar productos
+            </label>
+
+            <input
+                id="store-search"
+                name="q"
+                type="search"
+                placeholder="¿Qué estás buscando?"
+                [value]="searchTerm()"
+                (input)="updateSearch($event)">
+
             <button type="submit" aria-label="Buscar productos">
+
                 <span aria-hidden="true">⌕</span>
+
                 <span class="search-label">Buscar</span>
+
             </button>
+
         </form>
 
         <nav class="quick-links" aria-label="Accesos de usuario">
-            <a routerLink="/login"><span class="quick-label">Hola, entra</span><strong>Mi cuenta</strong></a>
-            <a routerLink="/login"><span class="quick-label">Consulta tus</span><strong>Pedidos</strong></a>
-            <a class="cart-link" routerLink="/productos"
-                [attr.aria-label]="'Carrito, ' + cartCount() + (cartCount() === 1 ? ' artículo' : ' artículos')">
-                <span class="cart-icon" aria-hidden="true">▱</span>
-                <span><span class="quick-label">Tu</span><strong> Carrito</strong></span>
-                <span class="cart-count">{{ cartCount() }}</span>
-            </a>
+
+            <!-- PERFIL DEL USUARIO -->
+            <div class="account-area">
+
+                @if (usuarioActual(); as usuario) {
+
+                    <!-- Usuario autenticado -->
+                    <button
+                        class="profile-trigger"
+                        type="button"
+                        (click)="togglePerfilMenu()"
+                        [attr.aria-expanded]="perfilMenuAbierto()"
+                        aria-label="Abrir menú de mi cuenta">
+
+                        <span class="profile-avatar profile-avatar-auth">
+                            {{ inicialesUsuario() }}
+                        </span>
+
+                        <svg
+                            class="profile-chevron"
+                            [class.profile-chevron-open]="perfilMenuAbierto()"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+
+                            <path d="m6 9 6 6 6-6" />
+
+                        </svg>
+
+                    </button>
+
+                    @if (perfilMenuAbierto()) {
+
+                        <div class="profile-dropdown">
+
+                            <div class="profile-dropdown-header">
+
+                                <span>Mi cuenta</span>
+
+                                <strong>{{ nombreUsuario() }}</strong>
+
+                            </div>
+
+                            <button
+                                class="profile-menu-item"
+                                type="button"
+                                (click)="mostrarPedidos()">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.7"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true">
+
+                                    <path d="m12 3 9 5-9 5-9-5 9-5Z" />
+                                    <path d="m3 8 9 5 9-5" />
+                                    <path d="M3 8v9l9 5 9-5V8" />
+                                    <path d="M12 13v9" />
+
+                                </svg>
+
+                                <span>Mostrar Pedidos</span>
+
+                            </button>
+
+                            <div class="profile-dropdown-divider"></div>
+
+                            <button
+                                class="profile-menu-item logout-item"
+                                type="button"
+                                (click)="cerrarSesion()">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true">
+
+                                    <path d="M10 17l5-5-5-5" />
+                                    <path d="M15 12H3" />
+                                    <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
+
+                                </svg>
+
+                                <span>Cerrar Sesión</span>
+
+                            </button>
+
+                            @if (errorCerrarSesion()) {
+
+                                <p class="logout-error" role="alert">
+                                    {{ errorCerrarSesion() }}
+                                </p>
+
+                            }
+
+                        </div>
+
+                    }
+
+                } @else {
+
+                    <!-- Usuario no autenticado -->
+                    <button
+                        class="profile-trigger profile-guest"
+                        type="button"
+                        (click)="irAlLogin()"
+                        aria-label="Iniciar sesión">
+
+                        <span class="profile-avatar profile-avatar-guest">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true">
+
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 21a8 8 0 0 1 16 0" />
+
+                            </svg>
+
+                        </span>
+
+                        <span class="profile-login-label">
+                            Iniciar sesión
+                        </span>
+
+                    </button>
+
+                }
+
+            </div>
+
+            <!-- CARRITO -->
+            <button
+                class="cart-link"
+                type="button"
+                (click)="abrirCarrito()"
+                [attr.aria-label]="'Tu carrito, ' + cartCount() + ' artículos'">
+
+                <svg
+                    class="cart-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true">
+
+                    <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 8H6" />
+                    <circle cx="10" cy="20" r="1" />
+                    <circle cx="18" cy="20" r="1" />
+
+                </svg>
+
+                <span class="cart-copy">
+
+                    <span class="quick-label">Tu</span>
+
+                    <strong>Carrito</strong>
+
+                </span>
+
+                <span class="cart-count">
+                    {{ cartCount() }}
+                </span>
+
+            </button>
+
         </nav>
 
-        <button class="menu-toggle" type="button" (click)="toggleMenu()"
-            [attr.aria-expanded]="menuOpen()" aria-controls="store-navigation">
+        <button
+            class="menu-toggle"
+            type="button"
+            (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()"
+            aria-controls="store-navigation">
+
             <span aria-hidden="true">☰</span>
-            <span class="visually-hidden">Abrir navegación</span>
+
+            <span class="visually-hidden">
+                Abrir navegación
+            </span>
+
         </button>
+
     </div>
 
-    <nav id="store-navigation" class="category-bar" [class.category-bar-open]="menuOpen()"
+    <nav
+        id="store-navigation"
+        class="category-bar"
+        [class.category-bar-open]="menuOpen()"
         aria-label="Categorías principales">
-        <a class="all-categories" routerLink="/productos" (click)="closeMenu()">☰ <span>Todo</span></a>
+
+        <a
+            class="all-categories"
+            routerLink="/productos"
+            (click)="closeMenu()">
+
+            ☰ <span>Todo</span>
+
+        </a>
+
         <a routerLink="/productos" (click)="closeMenu()">Ofertas</a>
+
         <a routerLink="/productos" (click)="closeMenu()">Novedades</a>
+
         <a routerLink="/productos" (click)="closeMenu()">Hogar</a>
+
         <a routerLink="/productos" (click)="closeMenu()">Tecnología</a>
+
         <a routerLink="/productos" (click)="closeMenu()">Moda</a>
+
         <a routerLink="/productos" (click)="closeMenu()">Belleza</a>
+
     </nav>
+
 </header>

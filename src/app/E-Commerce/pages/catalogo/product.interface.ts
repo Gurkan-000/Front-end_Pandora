@@ -1,3 +1,4 @@
+
 export interface Product {
     idProducto: string;
     nombreProducto: string;
@@ -7,7 +8,7 @@ export interface Product {
     nombreSubcategoria: string;
     precio: number;
     urlImagen: string;
-    stock: number;
+    cantidadVariantes: number;
 }
 
 export interface ProductApiResponse {
@@ -19,6 +20,7 @@ export interface ProductApiResponse {
     urlImagen: string;
     nombreMarca: string;
     nombreSubcategoria: string;
+    cantidadVariantes: number;
 }
 
 export interface ProductSubcategoryResponse {
@@ -26,6 +28,17 @@ export interface ProductSubcategoryResponse {
     nombreCategoria: string;
 }
 
+export interface ProductVariantAttributeResponse {
+    idValorAtributo: string;
+    idAtributo: string;
+    valor: string;
+    nombreAtributo: string;
+}
+
 export interface ProductVariantResponse {
+    idVarianteProducto: string;
     stock: number;
+    urlImagen: string | null;
+    esPrincipal: boolean;
+    atributos: ProductVariantAttributeResponse[];
 }

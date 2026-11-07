@@ -1,3 +1,31 @@
+
+/* Estilos globales del ERP */
 @import './app/ERP/shared/erp-modals/erp-modals.css';
 
-/* You can add global styles to this file, and also import other style files */
+
+/* =========================================
+   RESET GLOBAL
+========================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+}
+
+app-root {
+    display: block;
+    min-height: 100vh;
+}
