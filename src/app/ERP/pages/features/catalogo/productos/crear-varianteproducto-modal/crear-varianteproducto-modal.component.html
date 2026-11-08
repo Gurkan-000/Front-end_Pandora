@@ -116,22 +116,26 @@
                                     {{ item.atributo.nombreAtributo }}
                                 </label>
 
-                                <select [id]="'attribute-' + item.atributo.idAtributo" (change)="seleccionarValor(
+                                <ng-select
+                                    [labelForId]="'attribute-' + item.atributo.idAtributo"
+                                    [items]="item.valores"
+                                    bindLabel="valor"
+                                    bindValue="idValorAtributo"
+                                    [ngModel]="valoresSeleccionados()[item.atributo.idAtributo] ?? null"
+                                    (ngModelChange)="seleccionarValor(
                                         item.atributo.idAtributo,
-                                        $any($event.target).value
-                                    )" [disabled]="creandoVariante()">
-
-                                    <option value="" [selected]="!valoresSeleccionados()[item.atributo.idAtributo]">
-                                        Seleccionar valor
-                                    </option>
-
-                                    @for (valor of item.valores; track valor.idValorAtributo) {
-                                    <option [value]="valor.idValorAtributo"
-                                        [selected]="valoresSeleccionados()[item.atributo.idAtributo] === valor.idValorAtributo">
-                                        {{ valor.valor }}
-                                    </option>
-                                    }
-                                </select>
+                                        $event
+                                    )"
+                                    [ngModelOptions]="{ standalone: true }"
+                                    placeholder="Seleccionar valor"
+                                    [searchable]="true"
+                                    [clearable]="false"
+                                    dropdownPosition="bottom"
+                                    notFoundText="No se encontraron valores"
+                                    typeToSearchText="Escribe para buscar"
+                                    [disabled]="creandoVariante() || item.valores.length === 0"
+                                >
+                                </ng-select>
 
                                 @if (item.valores.length === 0) {
                                 <small class="field-hint">

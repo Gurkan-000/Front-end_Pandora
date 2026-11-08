@@ -39,6 +39,7 @@
     border-radius: 8px;
     box-shadow: 0 18px 50px rgba(35, 28, 39, 0.2);
     animation: variant-modal-in 150ms ease-out;
+    font-family: inherit; 
 }
 
 .variant-create-header,
@@ -263,7 +264,7 @@
 }
 
 /* Fix del input de stock que se salía del ancho */
-.attribute-field select,
+.attribute-field ng-select,
 .form-field input:not([type="checkbox"]) {
     box-sizing: border-box;
 }
@@ -287,7 +288,12 @@
     gap: 13px;
 }
 
-.attribute-field select,
+.attribute-field ng-select {
+    display: block;
+    width: 100%;
+    font-size: 12px;
+}
+
 .form-field input {
     display: block;
     width: 100%;
@@ -555,4 +561,31 @@
     .modal-footer {
         padding: 12px 15px;
     }
+}
+
+/* ============ Ng-select de atributos ============ */
+
+:host ::ng-deep .attribute-field .ng-select .ng-select-container {
+    min-height: 37px;
+    border: 1px solid #d9d3de;
+    border-radius: 5px;
+    background: #fff;
+    color: var(--variant-text);
+    font-size: 12px;
+}
+
+:host ::ng-deep .attribute-field .ng-select.ng-select-focused
+.ng-select-container {
+    border-color: var(--variant-primary);
+    box-shadow: 0 0 0 3px rgba(108, 63, 143, 0.1);
+}
+
+:host ::ng-deep .attribute-field .ng-select .ng-placeholder {
+    color: #99919f;
+}
+
+:host ::ng-deep .attribute-field .ng-select.ng-select-disabled
+.ng-select-container {
+    background: #f7f5f8;
+    cursor: not-allowed;
 }

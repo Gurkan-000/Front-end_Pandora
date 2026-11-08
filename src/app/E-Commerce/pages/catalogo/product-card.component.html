@@ -1,30 +1,69 @@
+
 <article class="product-card">
+
     <div class="product-image-wrap">
-        <img class="product-image" [ngSrc]="product().urlImagen" width="600" height="600"
-            [alt]="product().nombreProducto" loading="lazy">
-        <button class="favorite-button" type="button" [class.favorite-active]="favorite()"
+
+        <img
+            class="product-image"
+            [ngSrc]="product().urlImagen"
+            width="600"
+            height="600"
+            [alt]="product().nombreProducto"
+            loading="lazy">
+
+        <button
+            class="favorite-button"
+            type="button"
+            [class.favorite-active]="favorite()"
             [attr.aria-label]="favorite() ? 'Quitar de favoritos' : 'Añadir a favoritos'"
-            [attr.aria-pressed]="favorite()" (click)="favoriteToggled.emit(product().idProducto)">
-            <span aria-hidden="true">{{ favorite() ? '♥' : '♡' }}</span>
+            [attr.aria-pressed]="favorite()"
+            (click)="favoriteToggled.emit(product().idProducto)">
+
+            <span aria-hidden="true">
+                {{ favorite() ? '♥' : '♡' }}
+            </span>
+
         </button>
+
     </div>
+
     <div class="product-info">
+
         <div class="product-brand-row">
-            <span class="product-brand">{{ product().nombreMarca }}</span>
+
+            <span class="product-brand">
+                {{ product().nombreMarca }}
+            </span>
+
         </div>
+
         <h3>{{ product().nombreProducto }}</h3>
-        <p class="product-description">{{ product().descripcion }}</p>
+
+        <p class="product-description">
+            {{ product().descripcion }}
+        </p>
+
         <div class="price-row">
-            <span class="current-price">{{ product().precio | currency:'PEN':'S/':'1.2-2' }}</span>
+
+            <span class="current-price">
+                {{ product().precio | currency:'PEN':'S/':'1.2-2' }}
+            </span>
+
         </div>
-        <p class="delivery-note">Envío gratis en productos seleccionados</p>
-        <button class="add-button" type="button" [disabled]="product().stock === 0"
-            (click)="addRequested.emit(product())">
-            @if (product().stock > 0) {
-            <span aria-hidden="true">＋</span> Añadir al carrito
-            } @else {
-            Agotado
-            }
+
+        <p class="delivery-note">
+            Envío gratis en productos seleccionados
+        </p>
+
+        <button
+            class="view-button"
+            type="button"
+            (click)="viewRequested.emit(product().idProducto)">
+
+            Ver Producto
+
         </button>
+
     </div>
+
 </article>

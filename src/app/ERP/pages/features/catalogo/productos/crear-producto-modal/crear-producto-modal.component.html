@@ -105,42 +105,28 @@
                         </small>
                         }
                         <label for="marca">Marca</label>
-                        <select id="marca" formControlName="idMarca">
-                            <option value="">Selecciona una marca</option>
-                            @for (marca of marcas(); track marca.idMarca) {
-                            <option [value]="marca.idMarca">
-                                {{ marca.nombreMarca }}
-                            </option>
-                            }
-                        </select>
 
-                        @if (
-                        formulario.controls.idMarca.touched &&
-                        formulario.controls.idMarca.invalid
-                        ) {
+                        <ng-select id="marca" [items]="marcas()" bindLabel="nombreMarca" bindValue="idMarca"
+                            formControlName="idMarca" placeholder="Selecciona una marca" [searchable]="true"
+                            [clearable]="false" dropdownPosition="bottom" notFoundText="No se encontraron marcas"
+                            typeToSearchText="Escribe para buscar">
+                        </ng-select>
+
+                        @if (formulario.controls.idMarca.touched && formulario.controls.idMarca.invalid) {
                         <small class="field-error">Selecciona una marca.</small>
                         }
 
                         <label for="subcategoria">Subcategoría</label>
-                        <select id="subcategoria" formControlName="idSubCategoria">
-                            <option value="">Selecciona una subcategoría</option>
-                            @for (
-                            subcategoria of subcategorias();
-                            track subcategoria.idSubCategoria
-                            ) {
-                            <option [value]="subcategoria.idSubCategoria">
-                                {{ subcategoria.nombreSubCategoria }}
-                            </option>
-                            }
-                        </select>
 
-                        @if (
-                        formulario.controls.idSubCategoria.touched &&
-                        formulario.controls.idSubCategoria.invalid
-                        ) {
-                        <small class="field-error">
-                            Selecciona una subcategoría.
-                        </small>
+                        <ng-select id="subcategoria" [items]="subcategorias()" bindLabel="nombreSubCategoria"
+                            bindValue="idSubCategoria" formControlName="idSubCategoria"
+                            placeholder="Selecciona una subcategoría" [searchable]="true" [clearable]="false"
+                            dropdownPosition="bottom" notFoundText="No se encontraron subcategorías"
+                            typeToSearchText="Escribe para buscar">
+                        </ng-select>
+
+                        @if (formulario.controls.idSubCategoria.touched && formulario.controls.idSubCategoria.invalid) {
+                        <small class="field-error">Selecciona una subcategoría.</small>
                         }
 
                         <label>Atributos</label>

@@ -1,0 +1,73 @@
+<section class="pending-page">
+
+    <div class="pending-card">
+
+        <a class="back-link" routerLink="/productos">
+            <span aria-hidden="true">←</span>
+            Volver al catálogo
+        </a>
+
+        <div class="pending-content">
+
+            <div class="pending-icon">
+
+                @if (contenido().icono === 'shopping-bag') {
+
+                    <svg viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true">
+
+                        <path d="M5 8h14l1 13H4L5 8Z" />
+                        <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+
+                    </svg>
+
+                } @else {
+
+                    <svg viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true">
+
+                        <path d="m12 3 9 5-9 5-9-5 9-5Z" />
+                        <path d="m3 8 9 5 9-5" />
+                        <path d="M3 8v9l9 5 9-5V8" />
+                        <path d="M12 13v9" />
+
+                    </svg>
+
+                }
+
+            </div>
+
+            <span class="pending-label">
+                {{ contenido().etiqueta }}
+            </span>
+
+            <h1>{{ contenido().titulo }}</h1>
+
+            <p class="pending-description">
+                {{ contenido().descripcion }}
+            </p>
+
+            <div class="pending-notice">
+                Estamos preparando esta sección para que puedas
+                utilizarla próximamente.
+            </div>
+
+            <a class="catalog-button" routerLink="/productos">
+                Seguir explorando
+            </a>
+
+        </div>
+
+    </div>
+
+</section>

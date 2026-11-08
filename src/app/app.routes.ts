@@ -7,7 +7,7 @@ import { LayoutERPComponent } from './ERP/layout/erp-layout/erp-layout.component
 import { DashboardERPComponent } from './ERP/pages/dashboard/dashboard.component';
 import { erpGuard } from './core/guards/erp.guard';
 import { erpLoginGuard } from './core/guards/erp-login.guard';
-
+import { ecommerceAuthGuard } from './core/guards/ecommerce-auth.guard';
 import { MainLayoutComponent } from './E-Commerce/layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
@@ -87,9 +87,41 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                loadComponent: () => import('./E-Commerce/pages/catalogo/catalogo.component')
-                    .then((module) => module.CatalogoComponent)
-            }
+                pathMatch: 'full',
+                loadComponent: () => import(
+                    './E-Commerce/pages/catalogo/catalogo.component'
+                ).then((module) => module.CatalogoComponent)
+            },
+            {
+                path: ':idProducto',
+                loadComponent: () => import(
+                    './E-Commerce/pages/detalle-producto/detalle-producto.component'
+                ).then((module) => module.DetalleProductoComponent)
+            },
+            {
+                path: 'carrito',
+                canActivate: [ecommerceAuthGuard],
+                loadComponent: () => import('./E-Commerce/pages/acceso-pendiente/acceso-pendiente.component')
+                    .then(module => module.AccesoPendienteComponent),
+                data: {
+                    etiqueta: 'Tu compra',
+                    titulo: 'Tu carrito',
+                    descripcion: 'El acceso a tu carrito ya está preparado. Todavía falta conectar la funcionalidad de compras con los servicios del backend.',
+                    icono: 'shopping-bag'
+                }
+            },
+            {
+                path: 'mis-pedidos',
+                canActivate: [ecommerceAuthGuard],
+                loadComponent: () => import('./E-Commerce/pages/acceso-pendiente/acceso-pendiente.component')
+                    .then(module => module.AccesoPendienteComponent),
+                data: {
+                    etiqueta: 'Mi cuenta',
+                    titulo: 'Mis pedidos',
+                    descripcion: 'La consulta de pedidos todavía no está conectada a los servicios del backend. Esta sección estará disponible cuando integremos ese módulo.',
+                    icono: 'package'
+                }
+            },
         ]
     },
     {

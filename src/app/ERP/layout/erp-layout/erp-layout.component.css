@@ -41,6 +41,7 @@
 
 .erp-content {
     flex: 1;
+    min-width: 0;
     padding: 32px 36px;
 }
 

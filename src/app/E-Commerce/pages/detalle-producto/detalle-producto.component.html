@@ -1,0 +1,253 @@
+<div class="detail-page">
+
+    @if (cargando()) {
+
+    <div class="detail-state" role="status">
+        Cargando producto...
+    </div>
+
+    } @else if (errorCarga()) {
+
+    <section class="detail-state detail-error">
+
+        <h2>No fue posible mostrar el producto</h2>
+
+        <p>{{ errorCarga() }}</p>
+
+        <a routerLink="/productos" class="back-button">
+            Volver al catálogo
+        </a>
+
+    </section>
+
+    } @else if (producto(); as producto) {
+
+    <nav class="breadcrumbs" aria-label="Ruta de navegación">
+
+        <a routerLink="/productos">
+            Inicio
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a routerLink="/productos">
+            Catálogo
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span aria-current="page">
+            {{ producto.nombreProducto }}
+        </span>
+
+    </nav>
+
+
+    <section class="product-detail-layout">
+
+
+        <!-- Imagen del producto o de la variante -->
+        <div class="product-image-section">
+
+            @if (imagenActual(); as imagen) {
+
+            <img class="product-detail-image" [src]="imagen" [alt]="producto.nombreProducto">
+
+            } @else {
+
+            <div class="image-placeholder">
+                Imagen no disponible
+            </div>
+
+            }
+
+        </div>
+
+
+        <!-- Información general y variantes -->
+        <div class="product-information">
+
+
+            <p class="product-brand">
+                Marca: {{ producto.nombreMarca }}
+            </p>
+
+
+            <h1 class="product-title">
+                {{ producto.nombreProducto }}
+            </h1>
+
+
+            <p class="product-category">
+                Categoría: {{ producto.nombreCategoria }}
+            </p>
+
+
+            <p class="product-subcategory">
+                Subcategoría: {{ producto.nombreSubcategoria }}
+            </p>
+
+
+            <p class="product-price">
+                {{ producto.precio | currency:'PEN':'S/':'1.2-2' }}
+            </p>
+
+
+            <div class="product-description-section">
+
+                <h3>Descripción:</h3>
+
+                <p>
+                    {{ producto.descripcion }}
+                </p>
+
+            </div>
+
+
+            <div class="detail-divider"></div>
+
+
+            <section class="attributes-section">
+
+                <h2>Selecciona Atributos</h2>
+
+
+                @if (atributosDisponibles().length > 0) {
+
+                @for (
+                atributo of atributosDisponibles();
+                track atributo.idAtributo
+                ) {
+
+                <div class="attribute-group">
+
+                    <h3>
+                        {{ atributo.nombreAtributo }}
+                    </h3>
+
+
+                    <div class="attribute-options">
+
+                        @for (
+                        valor of atributo.valores;
+                        track valor.idValorAtributo
+                        ) {
+
+                        <button type="button" class="attribute-option" [class.attribute-option-selected]="
+                                                valoresSeleccionados()[atributo.idAtributo]
+                                                === valor.idValorAtributo
+                                            " [attr.aria-pressed]="
+                                                valoresSeleccionados()[atributo.idAtributo]
+                                                === valor.idValorAtributo
+                                            " (click)="seleccionarValor(
+                                                atributo.idAtributo,
+                                                valor.idValorAtributo
+                                            )">
+
+                            {{ valor.valor }}
+
+                        </button>
+
+                        }
+
+                    </div>
+
+                </div>
+
+                }
+
+                } @else {
+
+                <p class="no-attributes">
+                    Este producto no tiene atributos configurados.
+                </p>
+
+                }
+
+            </section>
+
+
+            <!-- Disponibilidad de la variante seleccionada -->
+            <section class="variant-availability">
+
+                @if (varianteSeleccionada(); as variante) {
+
+                @if (variante.stock > 0) {
+
+                <p class="stock-available">
+
+                    En stock: {{ variante.stock }}
+
+                    {{ variante.stock === 1 ? 'unidad' : 'unidades' }}
+
+                </p>
+
+                } @else {
+
+                <p class="stock-unavailable">
+                    Agotado
+                </p>
+
+                }
+
+
+                <div class="selected-variant">
+
+                    @for (
+                    atributo of variante.atributos;
+                    track atributo.idAtributo
+                    ) {
+
+                    <span>
+                        {{ atributo.valor }}
+
+                        @if (!$last) {
+                        -
+                        }
+                    </span>
+
+                    }
+
+                </div>
+
+                <!-- Botón de disponibilidad de la variante -->
+                <div class="variant-actions">
+
+                    <button type="button" class="add-cart-button" [disabled]="variante.stock <= 0"
+                        (click)="intentarAgregarAlCarrito()">
+
+                        @if (variante.stock > 0) {
+                        <span aria-hidden="true">＋</span>
+                        Añadir al carrito
+                        } @else {
+                        Agotado
+                        }
+
+                    </button>
+
+                </div>
+
+                @if (mensajeCarrito()) {
+                <p class="cart-feedback" role="status">
+                    {{ mensajeCarrito() }}
+                </p>
+                }
+
+                } @else {
+
+                <p class="combination-unavailable">
+                    Combinación no disponible
+                </p>
+
+                }
+
+            </section>
+
+
+        </div>
+
+    </section>
+
+    }
+
+</div>
