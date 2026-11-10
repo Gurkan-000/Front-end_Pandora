@@ -176,7 +176,24 @@
 }
 
 .table-scroll {
-    overflow-x: auto;
+    width: 100%;
+    max-height: min(40dvh, 620px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.table-scroll table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+}
+
+.table-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #faf9fb;
 }
 
 table {

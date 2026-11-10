@@ -11,6 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
+    FormsModule,
     ReactiveFormsModule,
     Validators
 } from '@angular/forms';
@@ -27,6 +28,8 @@ import {
     CrearVarianteProductoRequest
 } from '../../../../../interfaces/crear-variante-producto.interface';
 
+import { NgSelectModule } from '@ng-select/ng-select';
+
 interface AtributoConValores {
     atributo: ResponseAtributo;
     valores: ResponseValorAtributo[];
@@ -35,7 +38,12 @@ interface AtributoConValores {
 @Component({
     selector: 'app-crear-varianteproducto-modal',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NgSelectModule
+    ],
     templateUrl: './crear-varianteproducto-modal.component.html',
     styleUrl: './crear-varianteproducto-modal.component.css'
 })

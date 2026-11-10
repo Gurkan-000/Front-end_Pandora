@@ -1,7 +1,7 @@
 
 /* Estilos globales del ERP */
 @import './app/ERP/shared/erp-modals/erp-modals.css';
-
+@import '@ng-select/ng-select/themes/default.theme.css';
 
 /* =========================================
    RESET GLOBAL
@@ -28,4 +28,43 @@ body {
 app-root {
     display: block;
     min-height: 100vh;
+}
+
+.cdk-overlay-container {
+    z-index: 1200;
+}
+
+/* =========================================
+   TIPOGRAFÍA GLOBAL PARA NG-SELECT
+========================================= */
+
+.ng-select,
+.ng-select *,
+.ng-dropdown-panel,
+.ng-dropdown-panel * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.ng-select .ng-value,
+.ng-select .ng-placeholder,
+.ng-select .ng-input input {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.ng-dropdown-panel .ng-option,
+.ng-dropdown-panel .ng-option-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.ng-select,
+.ng-select * {
+    font-size: 12px !important;
+}
+
+.ng-dropdown-panel,
+.ng-dropdown-panel * {
+    font-size: 12px !important;
 }

@@ -104,7 +104,25 @@ h3 {
 
 .table-scroll {
     width: 100%;
-    overflow-x: auto;
+    max-height: min(35dvh, 400px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+/* Mantiene un ancho mínimo para evitar que las columnas se compriman */
+.table-scroll table {
+    width: 100%;
+    min-width: 440px;
+    border-collapse: collapse;
+}
+
+/* Mantiene los encabezados visibles al desplazarse */
+.table-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fcfafc;
 }
 
 table {

@@ -23,11 +23,16 @@ import {
     ResponseMarca,
     ResponseSubcategoria
 } from '../../../../../interfaces/crear-producto.interface';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
     selector: 'app-crear-producto-modal',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NgSelectModule
+    ],
     templateUrl: './crear-producto-modal.component.html',
     styleUrl: './crear-producto-modal.component.css'
 })
