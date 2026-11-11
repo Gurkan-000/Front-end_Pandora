@@ -9,12 +9,20 @@ import { routes } from './app.routes';
 
 import { csrfInterceptor } from './core/interceptors/csrf.interceptor';
 
+import { LOCALE_ID } from '@angular/core';
+
+import { registerLocaleData } from '@angular/common';
+
+import localeEsPe from '@angular/common/locales/es-PE';
+
+registerLocaleData(localeEsPe);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([csrfInterceptor])
-    )
+    ),
+    { provide: LOCALE_ID, useValue: 'es-PE' }
   ]
 };

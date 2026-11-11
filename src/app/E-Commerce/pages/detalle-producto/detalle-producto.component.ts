@@ -10,7 +10,7 @@ import {
 
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-
+import { CarritoService } from '../../../core/services/carrito.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
@@ -73,23 +73,21 @@ export class DetalleProductoComponent {
 
     protected readonly mensajeCarrito = signal('');
 
-    // Información general del producto.
+    protected readonly agregandoAlCarrito = signal(false);
+
+    private readonly carritoService = inject(CarritoService);
+
     readonly producto = signal<Product | null>(null);
 
-
-    // Variantes pertenecientes al producto seleccionado.
     readonly variantes = signal<ProductVariantResponse[]>([]);
 
-
-    // Valores actualmente seleccionados por el cliente.
     readonly valoresSeleccionados = signal<Record<string, string>>({});
 
-
-    // Estados de la página.
     readonly cargando = signal(true);
 
     readonly errorCarga = signal('');
 
+    protected readonly cantidadSeleccionada = signal(1);
 
     readonly atributosDisponibles = computed(() => {
 
@@ -381,35 +379,100 @@ export class DetalleProductoComponent {
     ): void {
 
         this.valoresSeleccionados.update(actuales => ({
-
             ...actuales,
-
             [idAtributo]: idValorAtributo
-
         }));
 
+        this.cantidadSeleccionada.set(1);
+    }
+
+    protected actualizarCantidad(event: Event, stock: number): void {
+
+        const input = event.target as HTMLInputElement;
+
+        const valor = Number(input.value);
+
+        const cantidad = input.value.trim() === '' || !Number.isFinite(valor)
+            ? 1
+            : Math.trunc(valor);
+
+        const cantidadLimitada = Math.min(
+            Math.max(cantidad, 1),
+            stock
+        );
+
+        this.cantidadSeleccionada.set(cantidadLimitada);
+
+        input.value = String(cantidadLimitada);
     }
 
     protected intentarAgregarAlCarrito(): void {
 
+        const variante = this.varianteSeleccionada();
+
+        const cantidad = this.cantidadSeleccionada();
+
+        if (
+            !variante ||
+            variante.stock <= 0 ||
+            cantidad < 1 ||
+            cantidad > variante.stock ||
+            this.agregandoAlCarrito()
+        ) {
+            return;
+        }
+
         this.mensajeCarrito.set('');
+        this.agregandoAlCarrito.set(true);
 
-        this.authService.validarSesion().subscribe(autenticado => {
+        this.authService.obtenerSesion().pipe(
 
-            if (!autenticado) {
+            switchMap(usuario => {
 
-                void this.router.navigate(['/login']);
+                if (!usuario.correo) {
+                    void this.router.navigate(['/login']);
+                    return EMPTY;
+                }
 
-                return;
-            }
+                return this.carritoService.agregarProducto(
+                    usuario.correo,
+                    variante.idVarianteProducto,
+                    cantidad
+                );
 
-            // El usuario está autenticado, pero todavía no
-            // tenemos conectada la funcionalidad del carrito.
+            }),
+
+            catchError(error => {
+
+                console.error('Error al añadir el producto al carrito:', error);
+                console.error('Mensajes del backend:', error.error?.mensajes);
+
+                if (error.status === 401) {
+                    this.authService.limpiarSesionLocal();
+                    void this.router.navigate(['/login']);
+                    return EMPTY;
+                }
+
+                this.mensajeCarrito.set(
+                    'No fue posible añadir el producto al carrito. Inténtalo nuevamente.'
+                );
+
+                return EMPTY;
+
+            }),
+
+            finalize(() => this.agregandoAlCarrito.set(false)),
+
+            takeUntilDestroyed(this.destroyRef)
+
+        ).subscribe(() => {
+
             this.mensajeCarrito.set(
-                'Tu sesión está activa. La funcionalidad del carrito estará disponible próximamente.'
+                'Producto añadido correctamente al carrito.'
             );
 
         });
+
     }
 
 }

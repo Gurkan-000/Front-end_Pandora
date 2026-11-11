@@ -93,22 +93,17 @@ export const routes: Routes = [
                 ).then((module) => module.CatalogoComponent)
             },
             {
+                path: 'carrito',
+                canActivate: [ecommerceAuthGuard],
+                loadComponent: () => import(
+                    './E-Commerce/pages/carrito/carrito.component'
+                ).then(module => module.CarritoComponent)
+            },
+            {
                 path: ':idProducto',
                 loadComponent: () => import(
                     './E-Commerce/pages/detalle-producto/detalle-producto.component'
-                ).then((module) => module.DetalleProductoComponent)
-            },
-            {
-                path: 'carrito',
-                canActivate: [ecommerceAuthGuard],
-                loadComponent: () => import('./E-Commerce/pages/acceso-pendiente/acceso-pendiente.component')
-                    .then(module => module.AccesoPendienteComponent),
-                data: {
-                    etiqueta: 'Tu compra',
-                    titulo: 'Tu carrito',
-                    descripcion: 'El acceso a tu carrito ya está preparado. Todavía falta conectar la funcionalidad de compras con los servicios del backend.',
-                    icono: 'shopping-bag'
-                }
+                ).then(module => module.DetalleProductoComponent)
             },
             {
                 path: 'mis-pedidos',

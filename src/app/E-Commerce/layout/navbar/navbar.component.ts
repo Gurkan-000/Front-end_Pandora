@@ -8,7 +8,6 @@ import {
 
 import { Router, RouterLink } from '@angular/router';
 
-import { ProductApiService } from '../../../core/services/product-api.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 import { catchError, of } from 'rxjs';
@@ -24,8 +23,6 @@ export class NavbarComponent {
 
     private readonly router = inject(Router);
     private readonly authService = inject(AuthService);
-
-    protected readonly cartCount = inject(ProductApiService).cartCount;
 
     protected readonly usuarioActual = this.authService.usuarioActual;
 
@@ -146,7 +143,11 @@ export class NavbarComponent {
 
     protected abrirCarrito(): void {
 
-        void this.router.navigate(['/productos/carrito']);
+        const url = this.router.serializeUrl(
+            this.router.createUrlTree(['/productos/carrito'])
+        );
+
+        window.open(url, '_blank', 'noopener,noreferrer');
     }
 
     protected cerrarSesion(): void {

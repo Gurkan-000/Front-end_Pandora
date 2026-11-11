@@ -1,6 +1,6 @@
 
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 
 import {
@@ -19,8 +19,6 @@ export class ProductApiService {
 
     private readonly backendUrl = 'http://localhost:8080';
     private readonly apiUrl = `${this.backendUrl}/api`;
-
-    readonly cartCount = signal(0);
 
     getProducts(): Observable<Product[]> {
 
@@ -118,12 +116,6 @@ export class ProductApiService {
         }
 
         return new URL(urlImagen, this.backendUrl).toString();
-
-    }
-
-    addToCart(): void {
-
-        this.cartCount.update(count => count + 1);
 
     }
 

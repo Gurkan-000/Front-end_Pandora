@@ -409,3 +409,47 @@
     font-size: 12px;
     line-height: 1.6;
 }
+
+.stock-quantity-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--detail-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.quantity-selector input {
+    width: 75px;
+    height: 36px;
+    padding: 0 8px;
+
+    border: 1px solid var(--detail-line);
+    border-radius: 6px;
+
+    background: white;
+    color: var(--detail-text);
+
+    font-family: inherit;
+    font-size: 14px;
+    text-align: center;
+}
+
+.quantity-selector input:focus {
+    outline: none;
+    border-color: var(--detail-accent);
+}
+
+.quantity-selector input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

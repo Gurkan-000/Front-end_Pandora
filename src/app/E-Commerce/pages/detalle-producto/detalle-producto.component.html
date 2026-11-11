@@ -174,13 +174,24 @@
 
                 @if (variante.stock > 0) {
 
-                <p class="stock-available">
+                <div class="stock-quantity-container">
 
-                    En stock: {{ variante.stock }}
+                    <p class="stock-available">
+                        En stock: {{ variante.stock }}
+                        {{ variante.stock === 1 ? 'unidad' : 'unidades' }}
+                    </p>
 
-                    {{ variante.stock === 1 ? 'unidad' : 'unidades' }}
+                    <label class="quantity-selector">
 
-                </p>
+                        <span>Cantidad</span>
+
+                        <input type="number" min="1" [max]="variante.stock" step="1" [value]="cantidadSeleccionada()"
+                            [disabled]="agregandoAlCarrito()" (change)="actualizarCantidad($event, variante.stock)"
+                            aria-label="Cantidad de unidades" />
+
+                    </label>
+
+                </div>
 
                 } @else {
 
@@ -210,17 +221,24 @@
 
                 </div>
 
-                <!-- Botón de disponibilidad de la variante -->
                 <div class="variant-actions">
 
-                    <button type="button" class="add-cart-button" [disabled]="variante.stock <= 0"
-                        (click)="intentarAgregarAlCarrito()">
+                    <button type="button" class="add-cart-button"
+                        [disabled]="variante.stock <= 0 || agregandoAlCarrito()" (click)="intentarAgregarAlCarrito()">
 
-                        @if (variante.stock > 0) {
+                        @if (agregandoAlCarrito()) {
+
+                        Añadiendo...
+
+                        } @else if (variante.stock > 0) {
+
                         <span aria-hidden="true">＋</span>
                         Añadir al carrito
+
                         } @else {
+
                         Agotado
+
                         }
 
                     </button>

@@ -1,0 +1,187 @@
+
+<section class="cart-page">
+
+    <div class="cart-container">
+
+        <header class="cart-header">
+
+            <div>
+                <span class="cart-eyebrow">TU COMPRA</span>
+                <h1>Tu carrito</h1>
+                <p>Revisa los productos que has seleccionado.</p>
+            </div>
+
+            <a routerLink="/productos" class="continue-shopping">
+                ← Seguir comprando
+            </a>
+
+        </header>
+
+        @if (cargando()) {
+
+            <div class="cart-state">
+                <p>Cargando tu carrito...</p>
+            </div>
+
+        } @else if (error()) {
+
+            <div class="cart-state cart-error">
+
+                <p>{{ error() }}</p>
+
+                <button
+                    type="button"
+                    class="retry-button"
+                    (click)="cargarCarrito()">
+                    Intentar nuevamente
+                </button>
+
+            </div>
+
+        } @else if (carrito(); as carritoActual) {
+
+            @if (carritoActual.detallesCarrito.length > 0) {
+
+                <div class="cart-content">
+
+                    <div class="cart-table-wrapper">
+
+                        <table class="cart-table">
+
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Producto</th>
+                                    <th>Precio unitario</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                    <th>Quitar</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @for (
+                                    detalle of carritoActual.detallesCarrito;
+                                    track detalle.idDetalleCarrito;
+                                    let i = $index
+                                ) {
+
+                                    <tr>
+
+                                        <td>{{ i + 1 }}</td>
+
+                                        <td class="product-name">
+                                            {{ detalle.nombreProducto }}
+                                        </td>
+
+                                        <td>
+                                            {{ detalle.precioUnitario | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                        </td>
+
+                                        <td>
+                                            {{ detalle.cantidad }}
+                                        </td>
+
+                                        <td class="subtotal">
+                                            {{ detalle.precioSubTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                        </td>
+
+                                        <td>
+
+                                            <button
+                                                type="button"
+                                                class="remove-button"
+                                                [disabled]="eliminandoId() !== null"
+                                                [attr.aria-label]="'Quitar ' + detalle.nombreProducto"
+                                                (click)="quitarProducto(detalle)">
+
+                                                @if (eliminandoId() === detalle.idDetalleCarrito) {
+                                                    ...
+                                                } @else {
+                                                    ×
+                                                }
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="cart-summary">
+
+                        <div class="cart-total">
+
+                            <span>Total</span>
+
+                            <strong>
+                                {{ carritoActual.precioTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            } @else {
+
+                <div class="cart-empty">
+
+                    <div class="empty-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 8H6" />
+                            <circle cx="10" cy="20" r="1" />
+                            <circle cx="18" cy="20" r="1" />
+
+                        </svg>
+                    </div>
+
+                    <h2>Tu carrito está vacío</h2>
+
+                    <p>
+                        Todavía no has añadido productos a tu carrito.
+                    </p>
+
+                    <a routerLink="/productos" class="shop-button">
+                        Explorar productos
+                    </a>
+
+                </div>
+
+            }
+
+        } @else {
+
+            <div class="cart-empty">
+
+                <h2>Tu carrito está vacío</h2>
+
+                <p>No encontramos productos en tu carrito.</p>
+
+                <a routerLink="/productos" class="shop-button">
+                    Explorar productos
+                </a>
+
+            </div>
+
+        }
+
+    </div>
+
+</section>
