@@ -1,4 +1,3 @@
-
 :host {
     display: block;
     color: #172a27;
@@ -248,4 +247,37 @@
         width: 100%;
     }
 
+}
+
+.empty-cart-button {
+    display: block;
+    width: 80%;
+    min-height: 42px;
+    margin-top: 10px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+    padding: 0 14px;
+
+    border: 1px solid #b64242;
+    border-radius: 4px;
+    color: #b64242;
+    background: #fff;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: background 150ms ease, color 150ms ease;
+}
+
+.empty-cart-button:hover:not(:disabled) {
+    color: #fff;
+    background: #b64242;
+}
+
+.empty-cart-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }

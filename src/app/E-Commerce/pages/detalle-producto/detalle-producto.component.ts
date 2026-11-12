@@ -406,6 +406,7 @@ export class DetalleProductoComponent {
         input.value = String(cantidadLimitada);
     }
 
+
     protected intentarAgregarAlCarrito(): void {
 
         const variante = this.varianteSeleccionada();
@@ -425,22 +426,10 @@ export class DetalleProductoComponent {
         this.mensajeCarrito.set('');
         this.agregandoAlCarrito.set(true);
 
-        this.authService.obtenerSesion().pipe(
-
-            switchMap(usuario => {
-
-                if (!usuario.correo) {
-                    void this.router.navigate(['/login']);
-                    return EMPTY;
-                }
-
-                return this.carritoService.agregarProducto(
-                    usuario.correo,
-                    variante.idVarianteProducto,
-                    cantidad
-                );
-
-            }),
+        this.carritoService.agregarProducto(
+            variante.idVarianteProducto,
+            cantidad
+        ).pipe(
 
             catchError(error => {
 
@@ -474,5 +463,6 @@ export class DetalleProductoComponent {
         });
 
     }
+
 
 }

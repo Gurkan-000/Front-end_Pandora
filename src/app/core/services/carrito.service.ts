@@ -14,10 +14,10 @@ export class CarritoService {
 
     private readonly apiUrl = 'http://localhost:8080/api/carrito';
 
-    obtenerCarrito(correo: string): Observable<ResponseCarrito> {
+    obtenerCarrito(): Observable<ResponseCarrito> {
 
         return this.http.get<ResponseCarrito>(
-            `${this.apiUrl}/${encodeURIComponent(correo)}`,
+            `${this.apiUrl}/mi-carrito`,
             {
                 withCredentials: true
             }
@@ -25,14 +25,14 @@ export class CarritoService {
     }
 
     agregarProducto(
-        correo: string,
         idVarianteProducto: string,
         cantidad: number
     ): Observable<void> {
+
         return this.http.post<void>(
-            `${this.apiUrl}/${encodeURIComponent(correo)}/agregar-detalle/${encodeURIComponent(idVarianteProducto)}`,
+            `${this.apiUrl}/agregar-detalle/${encodeURIComponent(idVarianteProducto)}`,
             {
-                cantidad: cantidad
+                cantidad
             },
             {
                 withCredentials: true
@@ -44,6 +44,16 @@ export class CarritoService {
 
         return this.http.delete<void>(
             `${this.apiUrl}/quitar-detalle/${encodeURIComponent(idDetalleCarrito)}`,
+            {
+                withCredentials: true
+            }
+        );
+    }
+
+    vaciarCarrito(idCarrito: string): Observable<void> {
+
+        return this.http.delete<void>(
+            `${this.apiUrl}/vaciar/${encodeURIComponent(idCarrito)}`,
             {
                 withCredentials: true
             }
