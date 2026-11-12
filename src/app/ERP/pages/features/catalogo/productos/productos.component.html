@@ -59,7 +59,7 @@
                         <th>Marca</th>
                         <th>Subcategoría</th>
                         <th class="variants-count-column">N.º variantes</th>
-                        <th class="variants-column">Variantes</th>
+                        <th class="variants-column variants-heading">Variantes</th>
                         <th class="actions-heading">Acciones</th>
                     </tr>
                 </thead>
@@ -75,8 +75,14 @@
                             <span class="count-pill">{{ producto.cantidadVariantes }}</span>
                         </td>
                         <td class="variants-column">
-                            <button type="button" class="view-button" (click)="verVariantes(producto)">
-                                Ver
+                            <button type="button" class="view-button"
+                                [attr.aria-label]="'Ver variantes de ' + producto.nombreProducto"
+                                [title]="'Ver variantes de ' + producto.nombreProducto"
+                                (click)="verVariantes(producto)">
+                                Ver variantes
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 12h14 M13 6l6 6-6 6" />
+                                </svg>
                             </button>
                         </td>
                         <td>

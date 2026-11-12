@@ -74,6 +74,26 @@ describe('CatalogoRecursoERPComponent', () => {
         expect(fixture.nativeElement.textContent).toContain('Rumbo');
     });
 
+    it('destaca la fila y el formulario durante la edición y permite cancelarla desde la fila', () => {
+        const row = fixture.nativeElement.querySelector('tbody tr') as HTMLTableRowElement;
+        const formPanel = fixture.nativeElement.querySelector('.form-panel') as HTMLElement;
+        const editButton = row.querySelector('[aria-label="Editar Vestidos"]') as HTMLButtonElement;
+
+        editButton.click();
+        fixture.detectChanges();
+
+        expect(row.classList.contains('is-editing')).toBe(true);
+        expect(row.querySelector('.editing-badge')?.textContent).toContain('Editando');
+        expect(formPanel.classList.contains('is-editing')).toBe(true);
+        expect(row.querySelector('[aria-label="Cancelar edición de Vestidos"]')).not.toBeNull();
+
+        (row.querySelector('[aria-label="Cancelar edición de Vestidos"]') as HTMLButtonElement).click();
+        fixture.detectChanges();
+
+        expect(row.classList.contains('is-editing')).toBe(false);
+        expect(formPanel.classList.contains('is-editing')).toBe(false);
+    });
+
     it('envía el id de categoría separado del body al crear una subcategoría', () => {
         const parentSelect = fixture.nativeElement.querySelector('#parentId') as HTMLSelectElement;
         parentSelect.value = 'cat-1';
