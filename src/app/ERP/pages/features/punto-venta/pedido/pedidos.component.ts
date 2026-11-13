@@ -1,17 +1,18 @@
-
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
 
 import { PedidoERPService } from '../../../../services/pedido-erp.service';
 import { ResponsePedidoERP } from '../../../../interfaces/reponse-pedido-erp.interface';
+import { DetallesPedidoModalERPComponent } from './detalles-pedido-modal/detalles-pedido-modal.component';
 
 @Component({
     selector: 'app-pedidos-erp',
     standalone: true,
     imports: [
         CurrencyPipe,
-        DatePipe
+        DatePipe,
+        DetallesPedidoModalERPComponent
     ],
     templateUrl: './pedidos.component.html',
     styleUrl: './pedidos.component.css'
@@ -23,6 +24,8 @@ export class PedidosERPComponent implements OnInit {
     readonly pedidos = signal<ResponsePedidoERP[]>([]);
     readonly cargando = signal(false);
     readonly error = signal('');
+
+    readonly pedidoSeleccionado = signal<ResponsePedidoERP | null>(null);
 
     ngOnInit(): void {
         this.cargarPedidos();
@@ -50,7 +53,32 @@ export class PedidosERPComponent implements OnInit {
     }
 
     verDetalles(pedido: ResponsePedidoERP): void {
-        // Conectaremos aquí la apertura del modal de detalles.
-        console.log('Pedido seleccionado:', pedido.idPedido);
+        this.pedidoSeleccionado.set(pedido);
+    }
+
+    cerrarDetalles(): void {
+        this.pedidoSeleccionado.set(null);
+    }
+
+    actualizarEstadoPedido(nuevoEstado: string): void {
+        const pedidoActual = this.pedidoSeleccionado();
+
+        if (!pedidoActual) {
+            return;
+        }
+
+        this.pedidos.update(pedidos =>
+            pedidos.map(pedido =>
+                pedido.idPedido === pedidoActual.idPedido
+                    ? { ...pedido, estadoPedido: nuevoEstado }
+                    : pedido
+            )
+        );
+
+        this.pedidoSeleccionado.update(pedido =>
+            pedido
+                ? { ...pedido, estadoPedido: nuevoEstado }
+                : null
+        );
     }
 }

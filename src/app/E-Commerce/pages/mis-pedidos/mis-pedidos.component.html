@@ -1,0 +1,377 @@
+<section class="orders-page">
+
+    <div class="orders-container">
+
+        <header class="orders-header">
+
+            <div>
+                <span class="orders-eyebrow">TU CUENTA</span>
+
+                <h1>Mis pedidos</h1>
+
+                <p>
+                    Consulta el historial de tus compras y el estado de tus pedidos.
+                </p>
+            </div>
+
+            <a routerLink="/productos" class="continue-shopping">
+                ← Seguir comprando
+            </a>
+
+        </header>
+
+        <section class="orders-panel">
+
+            <header class="panel-header">
+
+                <div>
+                    <h2>Historial de pedidos</h2>
+
+                    <p>
+                        @if (pedidos().length === 1) {
+                        Tienes 1 pedido registrado.
+                        } @else {
+                        Tienes {{ pedidos().length }} pedidos registrados.
+                        }
+                    </p>
+                </div>
+
+                <button type="button" class="refresh-button" title="Actualizar pedidos" aria-label="Actualizar pedidos"
+                    [disabled]="cargando()" (click)="cargarPedidos()">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 7v5h-5" />
+                        <path d="M4 17v-5h5" />
+                        <path d="M5.6 9A7 7 0 0 1 18 6l2 6" />
+                        <path d="M4 12l2 6a7 7 0 0 0 12.4-3" />
+                    </svg>
+
+                </button>
+
+            </header>
+
+            @if (cargando()) {
+
+            <div class="orders-state" role="status">
+
+                <span class="spinner" aria-hidden="true"></span>
+
+                <strong>Consultando tus pedidos...</strong>
+
+                <p>Estamos obteniendo tu historial de compras.</p>
+
+            </div>
+
+            } @else if (error()) {
+
+            <div class="orders-state error-state" role="alert">
+
+                <div class="state-icon" aria-hidden="true">!</div>
+
+                <strong>No pudimos cargar tus pedidos</strong>
+
+                <p>{{ error() }}</p>
+
+                <button type="button" class="retry-button" (click)="cargarPedidos()">
+                    Intentar nuevamente
+                </button>
+
+            </div>
+
+            } @else if (pedidos().length === 0) {
+
+            <div class="orders-state empty-state">
+
+                <div class="empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M6 3h12l3 4v14H3V7l3-4Z" />
+                        <path d="M3 7h18" />
+                        <path d="M9 11h6" />
+                        <path d="M9 15h6" />
+                    </svg>
+                </div>
+
+                <h3>Aún no tienes pedidos</h3>
+
+                <p>
+                    Cuando realices una compra, podrás consultar
+                    aquí su estado y la información correspondiente.
+                </p>
+
+                <a routerLink="/productos" class="shop-button">
+                    Explorar productos
+                </a>
+
+            </div>
+
+            } @else {
+
+            <div class="orders-table-wrapper">
+
+                <table class="orders-table">
+
+                    <thead>
+                        <tr>
+                            <th class="number-column">N.º</th>
+                            <th>Estado</th>
+                            <th>Fecha / Hora</th>
+                            <th class="details-column">Detalles</th>
+                            <th class="payment-column">Pago Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @for (
+                        pedido of pedidos();
+                        track pedido.idPedido;
+                        let i = $index
+                        ) {
+
+                        <tr>
+
+                            <td class="number-column">
+                                {{ i + 1 }}
+                            </td>
+
+                            <td>
+                                <span class="status-pill" [class]="obtenerClaseEstado(pedido.estadoPedido)">
+                                    {{ pedido.estadoPedido }}
+                                </span>
+                            </td>
+
+                            <td class="date-column">
+                                {{ pedido.fechaPedido }}
+                            </td>
+
+                            <td class="details-column">
+                                <button type="button" class="details-button" (click)="verDetalles(pedido)">
+                                    Ver Detalles
+                                    <span aria-hidden="true">→</span>
+                                </button>
+                            </td>
+
+                            <td class="payment-column">
+                                {{ pedido.pagoTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                            </td>
+
+                        </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <footer class="orders-footer">
+                <span>
+                    Mostrando {{ pedidos().length }}
+                    {{ pedidos().length === 1 ? 'pedido' : 'pedidos' }}
+                </span>
+            </footer>
+
+            }
+
+        </section>
+
+    </div>
+
+</section>
+
+
+@if (mostrarModalDetalles()) {
+<div class="order-modal-backdrop" (click)="cerrarModalDetalles()" (keydown.escape)="cerrarModalDetalles()">
+
+    <section class="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-modal-title"
+        (click)="$event.stopPropagation()">
+
+        <!-- ENCABEZADO -->
+        <header class="order-modal-header">
+            <div>
+                <span class="modal-eyebrow">INFORMACIÓN DE COMPRA</span>
+
+                <h2 id="order-modal-title">
+                    Detalles del pedido
+                </h2>
+
+                @if (pedidoSeleccionado(); as pedido) {
+                <span class="order-reference">
+                    Pedido #{{ pedido.idPedido.slice(0, 8).toUpperCase() }}
+                </span>
+                }
+            </div>
+
+            <button type="button" class="modal-close-button" aria-label="Cerrar detalles del pedido"
+                [disabled]="cargandoDetalles()" (click)="cerrarModalDetalles()">
+                &times;
+            </button>
+        </header>
+
+        <!-- CONTENIDO -->
+        <div class="order-modal-body">
+
+            @if (cargandoDetalles()) {
+            <div class="modal-state">
+                <span class="modal-spinner"></span>
+                <strong>Consultando tu pedido...</strong>
+                <span>Estamos obteniendo la información de tu compra.</span>
+            </div>
+            }
+
+            @else if (errorDetalles()) {
+            <div class="modal-state modal-error">
+                <span class="state-icon">!</span>
+
+                <strong>No se pudieron cargar los detalles</strong>
+
+                <span>{{ errorDetalles() }}</span>
+
+                <button type="button" class="retry-button" (click)="reintentarDetalles()">
+                    Intentar nuevamente
+                </button>
+            </div>
+            }
+
+            @else if (pedidoDetalle(); as pedido) {
+
+            <!-- INFORMACIÓN PRINCIPAL -->
+            <section class="detail-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-eyebrow">RESUMEN</span>
+                        <h3>Información del pedido</h3>
+                    </div>
+
+                    <span class="detail-status" [class.status-pendiente]="pedido.estadoPedido === 'PENDIENTE'"
+                        [class.status-confirmado]="pedido.estadoPedido === 'CONFIRMADO'"
+                        [class.status-enviado]="pedido.estadoPedido === 'ENVIADO'"
+                        [class.status-entregado]="pedido.estadoPedido === 'ENTREGADO'"
+                        [class.status-cancelado]="pedido.estadoPedido === 'CANCELADO'">
+                        {{ pedido.estadoPedido }}
+                    </span>
+                </div>
+
+                <div class="order-info-grid">
+                    <div class="info-item">
+                        <span>Fecha del pedido</span>
+                        <strong>{{ pedido.fechaPedido }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Departamento</span>
+                        <strong>{{ pedido.departamentoEntrega }}</strong>
+                    </div>
+
+                    <div class="info-item info-full">
+                        <span>Distrito</span>
+                        <strong>{{ pedido.distritoEntrega }}</strong>
+                    </div>
+
+                    <div class="info-item info-full">
+                        <span>Dirección de entrega</span>
+                        <strong>{{ pedido.direccionEntrega }}</strong>
+                    </div>
+
+                    <div class="info-item info-full">
+                        <span>Información adicional</span>
+                        <strong>
+                            {{ pedido.informacionAdicional || 'Sin información adicional' }}
+                        </strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRODUCTOS -->
+            <section class="detail-section products-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-eyebrow">TU COMPRA</span>
+                        <h3>Productos del pedido</h3>
+                    </div>
+
+                    <span class="products-count">
+                        {{ pedido.detalles.length }}
+                        {{ pedido.detalles.length === 1 ? 'producto' : 'productos' }}
+                    </span>
+                </div>
+
+                @if (pedido.detalles.length > 0) {
+                <div class="order-products-scroll">
+                    <table class="order-products-table">
+                        <thead>
+                            <tr>
+                                <th>N.º</th>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Pago Subtotal</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (
+                            detalle of pedido.detalles;
+                            track detalle.idDetallePedido;
+                            let i = $index
+                            ) {
+                            <tr>
+                                <td class="product-number">
+                                    {{ i + 1 }}
+                                </td>
+
+                                <td class="product-name">
+                                    {{ detalle.nombreProducto }}
+                                </td>
+
+                                <td>
+                                    {{ detalle.precioUnitario | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                </td>
+
+                                <td class="product-quantity">
+                                    {{ detalle.cantidad }}
+                                </td>
+
+                                <td class="product-subtotal">
+                                    {{ detalle.pagoSubtotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                } @else {
+                <div class="no-products">
+                    No hay productos registrados en este pedido.
+                </div>
+                }
+
+                <!-- TOTAL -->
+                <div class="order-total">
+                    <div>
+                        <span>Total de la compra</span>
+                        <small>Importe total del pedido</small>
+                    </div>
+
+                    <strong>
+                        {{ pedido.pagoTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                    </strong>
+                </div>
+            </section>
+            }
+        </div>
+
+        <!-- PIE -->
+        <footer class="order-modal-footer">
+            <button type="button" class="modal-finish-button" [disabled]="cargandoDetalles()"
+                (click)="cerrarModalDetalles()">
+                Cerrar
+            </button>
+        </footer>
+
+    </section>
+</div>
+}

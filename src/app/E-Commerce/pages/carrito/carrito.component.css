@@ -68,7 +68,10 @@
 
 .cart-table-wrapper {
     width: 100%;
-    overflow-x: auto;
+    max-height: min(40dvh, 400px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
 }
 
 .cart-table {
@@ -79,6 +82,13 @@
 }
 
 .cart-table thead {
+    background: #f3f6f3;
+}
+
+.cart-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     background: #f3f6f3;
 }
 
@@ -280,4 +290,441 @@
 .empty-cart-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* =========================================
+   BOTÓN PROCESAR COMPRA
+========================================= */
+
+.process-purchase-button {
+    display: block;
+    width: 80%;
+    min-height: 44px;
+    margin: 10px auto 0;
+    padding: 0 14px;
+
+    border: 1px solid var(--cart-ink);
+    border-radius: 4px;
+
+    color: #fff;
+    background: var(--cart-ink);
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 150ms ease,
+        color 150ms ease,
+        border-color 150ms ease;
+}
+
+.process-purchase-button:hover:not(:disabled) {
+    border-color: #304b40;
+    background: #304b40;
+}
+
+.process-purchase-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   MODAL DE COMPRA
+========================================= */
+
+.purchase-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+
+    padding: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(20, 32, 27, 0.58);
+    backdrop-filter: blur(3px);
+
+    animation: purchase-backdrop-in 160ms ease;
+}
+
+.purchase-modal {
+    width: 100%;
+    max-width: 570px;
+    max-height: min(90dvh, 760px);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border: 1px solid var(--cart-line);
+    border-radius: 10px;
+
+    background: #fff;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.2);
+
+    animation: purchase-modal-in 180ms ease;
+}
+
+.purchase-modal-header {
+    padding: 25px 28px 20px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+
+    border-bottom: 1px solid var(--cart-line);
+}
+
+.purchase-modal-header h2 {
+    margin: 7px 0;
+    color: var(--cart-ink);
+    font-size: 23px;
+}
+
+.purchase-modal-header p {
+    margin: 0;
+    color: var(--cart-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.purchase-close-button {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--cart-line);
+    border-radius: 50%;
+
+    color: var(--cart-muted);
+    background: #fff;
+
+    font-size: 23px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.purchase-close-button:hover:not(:disabled) {
+    color: var(--cart-ink);
+    background: #f3f6f3;
+}
+
+.purchase-close-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   FORMULARIO
+========================================= */
+
+.purchase-form {
+    padding: 24px 28px 26px;
+
+    overflow-y: auto;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-field {
+    min-width: 0;
+    margin-bottom: 19px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field label {
+    color: var(--cart-ink);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.form-field label span {
+    color: #b54747;
+}
+
+.form-field input,
+.form-field textarea {
+    width: 100%;
+    min-height: 43px;
+    padding: 11px 12px;
+
+    border: 1px solid #dce4de;
+    border-radius: 5px;
+    outline: none;
+
+    color: var(--cart-ink);
+    background: #fff;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.form-field textarea {
+    min-height: 95px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+    color: #a0aaa3;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+    border-color: #9b874d;
+    box-shadow: 0 0 0 3px rgba(242, 191, 75, 0.15);
+}
+
+.form-field input.input-invalid,
+.form-field textarea.input-invalid {
+    border-color: #c65b5b;
+}
+
+.field-error {
+    color: #b54747;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.purchase-error {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+
+    border: 1px solid #efd0d0;
+    border-radius: 5px;
+
+    color: #a33c3c;
+    background: #fff5f5;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   AVISO DE PAGO
+========================================= */
+
+.purchase-notice {
+    margin: 2px 0 22px;
+    padding: 12px 13px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    border: 1px solid #eee5c9;
+    border-radius: 5px;
+
+    color: #77632e;
+    background: #fffaf0;
+}
+
+.purchase-notice > span {
+    flex: 0 0 auto;
+    font-size: 16px;
+}
+
+.purchase-notice p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   BOTONES DE LA MODAL
+========================================= */
+
+.purchase-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.purchase-cancel-button,
+.purchase-submit-button {
+    min-height: 42px;
+    padding: 0 19px;
+
+    border-radius: 5px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 150ms ease,
+        color 150ms ease,
+        border-color 150ms ease;
+}
+
+.purchase-cancel-button {
+    border: 1px solid var(--cart-line);
+    color: var(--cart-muted);
+    background: #fff;
+}
+
+.purchase-cancel-button:hover:not(:disabled) {
+    color: var(--cart-ink);
+    background: #f3f6f3;
+}
+
+.purchase-submit-button {
+    border: 1px solid var(--cart-ink);
+    color: #fff;
+    background: var(--cart-ink);
+}
+
+.purchase-submit-button:hover:not(:disabled) {
+    border-color: #304b40;
+    background: #304b40;
+}
+
+.purchase-cancel-button:disabled,
+.purchase-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   COMPRA EXITOSA
+========================================= */
+
+.purchase-success {
+    padding: 42px 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+.purchase-success-icon {
+    width: 62px;
+    height: 62px;
+    margin-bottom: 18px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    color: #fff;
+    background: #527c60;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.purchase-success h3 {
+    margin: 0 0 9px;
+    color: var(--cart-ink);
+    font-size: 21px;
+}
+
+.purchase-success p {
+    max-width: 360px;
+    margin: 0 0 24px;
+
+    color: var(--cart-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   ANIMACIONES Y RESPONSIVE
+========================================= */
+
+@keyframes purchase-backdrop-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes purchase-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+
+    .purchase-modal-backdrop {
+        padding: 12px;
+    }
+
+    .purchase-modal {
+        max-height: 94dvh;
+    }
+
+    .purchase-modal-header {
+        padding: 20px 19px 16px;
+    }
+
+    .purchase-modal-header h2 {
+        font-size: 20px;
+    }
+
+    .purchase-form {
+        padding: 20px 19px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .purchase-modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .purchase-cancel-button,
+    .purchase-submit-button {
+        width: 100%;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .purchase-modal-backdrop,
+    .purchase-modal {
+        animation: none;
+    }
+
 }

@@ -102,7 +102,7 @@ export const routes: Routes = [
                 pathMatch: 'full',
                 loadComponent: () => import(
                     './E-Commerce/pages/catalogo/catalogo.component'
-                ).then((module) => module.CatalogoComponent)
+                ).then(module => module.CatalogoComponent)
             },
             {
                 path: 'carrito',
@@ -112,23 +112,18 @@ export const routes: Routes = [
                 ).then(module => module.CarritoComponent)
             },
             {
+                path: 'mis-pedidos',
+                canActivate: [ecommerceAuthGuard],
+                loadComponent: () => import(
+                    './E-Commerce/pages/mis-pedidos/mis-pedidos.component'
+                ).then(module => module.MisPedidosComponent)
+            },
+            {
                 path: ':idProducto',
                 loadComponent: () => import(
                     './E-Commerce/pages/detalle-producto/detalle-producto.component'
                 ).then(module => module.DetalleProductoComponent)
-            },
-            {
-                path: 'mis-pedidos',
-                canActivate: [ecommerceAuthGuard],
-                loadComponent: () => import('./E-Commerce/pages/acceso-pendiente/acceso-pendiente.component')
-                    .then(module => module.AccesoPendienteComponent),
-                data: {
-                    etiqueta: 'Mi cuenta',
-                    titulo: 'Mis pedidos',
-                    descripcion: 'La consulta de pedidos todavía no está conectada a los servicios del backend. Esta sección estará disponible cuando integremos ese módulo.',
-                    icono: 'package'
-                }
-            },
+            }
         ]
     },
     {

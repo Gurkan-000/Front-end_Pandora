@@ -42,7 +42,7 @@
 
             <div class="cart-table-wrapper">
 
-                <table class="cart-table">
+                <table class="table-scroll cart-table">
 
                     <thead>
                         <tr>
@@ -122,8 +122,13 @@
         </div>
 
         <button type="button" class="empty-cart-button" (click)="abrirConfirmacionVaciar()"
-            [disabled]="vaciandoCarrito()">
+            [disabled]="vaciandoCarrito() || procesandoCompra()">
             Vaciar carrito
+        </button>
+
+        <button type="button" class="process-purchase-button" (click)="abrirModalCompra()"
+            [disabled]="vaciandoCarrito() || procesandoCompra()">
+            Procesar compra
         </button>
 
         } @else {
@@ -180,4 +185,235 @@
     message="¿Estás seguro de que deseas vaciar tu carrito? Se eliminarán todos los productos que has agregado."
     confirmLabel="Sí, vaciar carrito" cancelLabel="Cancelar" [busy]="vaciandoCarrito()" busyLabel="Vaciando..."
     (confirmed)="confirmarVaciarCarrito()" (cancelled)="cerrarConfirmacionVaciar()" />
+}
+
+@if (mostrarModalCompra()) {
+
+<div class="purchase-modal-backdrop" (click)="cerrarModalCompra()">
+
+    <section class="purchase-modal" role="dialog" aria-modal="true" aria-labelledby="purchase-modal-title"
+        (click)="$event.stopPropagation()">
+
+        <header class="purchase-modal-header">
+
+            <div>
+                <span class="cart-eyebrow">FINALIZAR COMPRA</span>
+
+                <h2 id="purchase-modal-title">
+                    Datos de entrega
+                </h2>
+
+                <p>
+                    Completa la información para registrar tu pedido.
+                </p>
+            </div>
+
+            <button type="button" class="purchase-close-button" aria-label="Cerrar modal"
+                [disabled]="procesandoCompra()" (click)="cerrarModalCompra()">
+                ×
+            </button>
+
+        </header>
+
+        @if (compraExitosa()) {
+
+        <div class="purchase-success">
+
+            <div class="purchase-success-icon">
+                ✓
+            </div>
+
+            <h3>¡Pedido registrado!</h3>
+
+            <p>
+                Tu compra se ha procesado correctamente.
+                Gracias por comprar en Pandora.
+            </p>
+
+            <button type="button" class="purchase-submit-button" (click)="cerrarModalCompra()">
+                Continuar
+            </button>
+
+        </div>
+
+        } @else {
+
+        <form class="purchase-form" [formGroup]="formularioCompra" (ngSubmit)="confirmarCompra()">
+
+            @if (errorCompra()) {
+            <div class="purchase-error" role="alert">
+                {{ errorCompra() }}
+            </div>
+            }
+
+            <div class="form-field">
+
+                <label for="informacionAdicional">
+                    Información adicional
+                    <span>*</span>
+                </label>
+
+                <textarea id="informacionAdicional" formControlName="informacionAdicional" rows="3"
+                    placeholder="Ej. Entre la Av. Perú y la Av. Lima, en la cuadra 38." [class.input-invalid]="
+                            formularioCompra.controls.informacionAdicional.invalid &&
+                            formularioCompra.controls.informacionAdicional.touched
+                        ">
+                    </textarea>
+
+                @if (
+                formularioCompra.controls.informacionAdicional.touched &&
+                formularioCompra.controls.informacionAdicional.invalid
+                ) {
+                <small class="field-error">
+                    @if (formularioCompra.controls.informacionAdicional.hasError('required')) {
+                    La información de entrega es obligatoria.
+                    } @else {
+                    No puede contener solamente espacios.
+                    }
+                </small>
+                }
+
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-field">
+
+                    <label for="departamentoEntrega">
+                        Departamento
+                        <span>*</span>
+                    </label>
+
+                    <input id="departamentoEntrega" type="text" formControlName="departamentoEntrega" maxlength="40"
+                        placeholder="Ej. Lima" [class.input-invalid]="
+                                formularioCompra.controls.departamentoEntrega.invalid &&
+                                formularioCompra.controls.departamentoEntrega.touched
+                            " />
+
+                    @if (
+                    formularioCompra.controls.departamentoEntrega.touched &&
+                    formularioCompra.controls.departamentoEntrega.invalid
+                    ) {
+                    <small class="field-error">
+                        @if (
+                        formularioCompra.controls.departamentoEntrega.hasError('required')
+                        ) {
+                        El departamento es obligatorio.
+                        } @else if (
+                        formularioCompra.controls.departamentoEntrega.hasError('maxlength')
+                        ) {
+                        Máximo 40 caracteres.
+                        } @else {
+                        No puede contener solamente espacios.
+                        }
+                    </small>
+                    }
+
+                </div>
+
+                <div class="form-field">
+
+                    <label for="distritoEntrega">
+                        Distrito
+                        <span>*</span>
+                    </label>
+
+                    <input id="distritoEntrega" type="text" formControlName="distritoEntrega" maxlength="40"
+                        placeholder="Ej. San Miguel" [class.input-invalid]="
+                                formularioCompra.controls.distritoEntrega.invalid &&
+                                formularioCompra.controls.distritoEntrega.touched
+                            " />
+
+                    @if (
+                    formularioCompra.controls.distritoEntrega.touched &&
+                    formularioCompra.controls.distritoEntrega.invalid
+                    ) {
+                    <small class="field-error">
+                        @if (
+                        formularioCompra.controls.distritoEntrega.hasError('required')
+                        ) {
+                        El distrito es obligatorio.
+                        } @else if (
+                        formularioCompra.controls.distritoEntrega.hasError('maxlength')
+                        ) {
+                        Máximo 40 caracteres.
+                        } @else {
+                        No puede contener solamente espacios.
+                        }
+                    </small>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="form-field">
+
+                <label for="direccionEntrega">
+                    Dirección de entrega
+                    <span>*</span>
+                </label>
+
+                <input id="direccionEntrega" type="text" formControlName="direccionEntrega" maxlength="255"
+                    placeholder="Ej. Jr. Huánuco 3878" [class.input-invalid]="
+                            formularioCompra.controls.direccionEntrega.invalid &&
+                            formularioCompra.controls.direccionEntrega.touched
+                        " />
+
+                @if (
+                formularioCompra.controls.direccionEntrega.touched &&
+                formularioCompra.controls.direccionEntrega.invalid
+                ) {
+                <small class="field-error">
+                    @if (
+                    formularioCompra.controls.direccionEntrega.hasError('required')
+                    ) {
+                    La dirección de entrega es obligatoria.
+                    } @else if (
+                    formularioCompra.controls.direccionEntrega.hasError('maxlength')
+                    ) {
+                    Máximo 255 caracteres.
+                    } @else {
+                    No puede contener solamente espacios.
+                    }
+                </small>
+                }
+
+            </div>
+
+            <div class="purchase-notice">
+                <span aria-hidden="true">ⓘ</span>
+                <p>
+                    Por ahora, el proceso de pago es simbólico.
+                    Al confirmar, se registrará tu pedido.
+                </p>
+            </div>
+
+            <footer class="purchase-modal-footer">
+
+                <button type="button" class="purchase-cancel-button" [disabled]="procesandoCompra()"
+                    (click)="cerrarModalCompra()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="purchase-submit-button" [disabled]="procesandoCompra()">
+
+                    @if (procesandoCompra()) {
+                    Procesando...
+                    } @else {
+                    Confirmar compra
+                    }
+
+                </button>
+
+            </footer>
+
+        </form>
+
+        }
+
+    </section>
+
+</div>
+
 }

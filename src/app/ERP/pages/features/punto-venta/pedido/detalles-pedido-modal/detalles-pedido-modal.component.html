@@ -1,0 +1,222 @@
+@if (pedido(); as detalle) {
+    <div class="order-modal-backdrop" (click)="cerrarModal()">
+        <section
+            class="order-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="order-modal-title"
+            (click)="$event.stopPropagation()">
+
+            <header class="modal-header">
+                <div>
+                    <span class="modal-eyebrow">Punto de Venta</span>
+                    <h2 id="order-modal-title">Detalles del pedido</h2>
+                    <p>Consulta la información y los productos del pedido.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="close-button"
+                    aria-label="Cerrar modal"
+                    (click)="cerrarModal()">
+                    ×
+                </button>
+            </header>
+
+            <div class="modal-content">
+
+                <section class="order-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Estado del pedido</span>
+
+                        <span
+                            class="status-pill"
+                            [class.status-pendiente]="detalle.estadoPedido === 'PENDIENTE'"
+                            [class.status-enviado]="detalle.estadoPedido === 'ENVIADO'"
+                            [class.status-entregado]="detalle.estadoPedido === 'ENTREGADO'"
+                            [class.status-cancelado]="detalle.estadoPedido === 'CANCELADO'">
+                            {{ detalle.estadoPedido }}
+                        </span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Fecha del pedido</span>
+                        <strong>{{ detalle.fechaPedido }}</strong>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Correo del cliente</span>
+                        <strong class="email-value">{{ detalle.correo }}</strong>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">ID del pedido</span>
+                        <strong class="id-value">{{ detalle.idPedido }}</strong>
+                    </div>
+                </section>
+
+                <section class="information-section">
+                    <h3>Información de entrega</h3>
+
+                    <div class="information-grid">
+                        <div class="information-item">
+                            <span>Departamento</span>
+                            <strong>{{ detalle.departamentoEntrega }}</strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Distrito</span>
+                            <strong>{{ detalle.distritoEntrega }}</strong>
+                        </div>
+
+                        <div class="information-item full-width">
+                            <span>Dirección</span>
+                            <strong>{{ detalle.direccionEntrega }}</strong>
+                        </div>
+
+                        @if (detalle.informacionAdicional) {
+                            <div class="information-item full-width">
+                                <span>Información adicional</span>
+                                <strong>{{ detalle.informacionAdicional }}</strong>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <section class="products-section">
+                    <div class="section-heading">
+                        <div>
+                            <h3>Productos del pedido</h3>
+                            <p>{{ detalle.detalles.length }} productos registrados</p>
+                        </div>
+                    </div>
+
+                    @if (detalle.detalles.length > 0) {
+                        <div class="products-table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>N.º</th>
+                                        <th>Producto</th>
+                                        <th>Precio unitario</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @for (
+                                        producto of detalle.detalles;
+                                        track producto.idDetallePedido;
+                                        let i = $index
+                                    ) {
+                                        <tr>
+                                            <td>{{ i + 1 }}</td>
+                                            <td class="product-name">
+                                                {{ producto.nombreProducto }}
+                                            </td>
+                                            <td>
+                                                {{ producto.precioUnitario | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                            </td>
+                                            <td>{{ producto.cantidad }}</td>
+                                            <td class="subtotal">
+                                                {{ producto.pagoSubtotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    } @else {
+                        <div class="empty-products">
+                            No hay productos registrados en este pedido.
+                        </div>
+                    }
+                </section>
+
+                <footer class="order-footer">
+                    <div class="payment-total">
+                        <span>Total del pedido</span>
+                        <strong>
+                            {{ detalle.pagoTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                        </strong>
+                    </div>
+
+                    @if (detalle.estadoPedido === 'PENDIENTE' || detalle.estadoPedido === 'ENVIADO') {
+                        <div class="state-action">
+                            <div>
+                                <span class="summary-label">Siguiente estado</span>
+                                <strong>
+                                    {{ detalle.estadoPedido === 'PENDIENTE' ? 'ENVIADO' : 'ENTREGADO' }}
+                                </strong>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="change-state-button"
+                                [disabled]="actualizandoEstado()"
+                                (click)="prepararCambioEstado()">
+                                {{ detalle.estadoPedido === 'PENDIENTE' ? 'Marcar como enviado' : 'Marcar como entregado' }}
+                            </button>
+                        </div>
+                    }
+
+                    @if (errorEstado()) {
+                        <p class="state-error" role="alert">
+                            {{ errorEstado() }}
+                        </p>
+                    }
+                </footer>
+            </div>
+        </section>
+    </div>
+} @else if (cargando()) {
+    <div class="order-modal-backdrop">
+        <section class="loading-modal" role="status">
+            <span class="loading-spinner"></span>
+            <p>Cargando detalles del pedido...</p>
+        </section>
+    </div>
+} @else if (error()) {
+    <div class="order-modal-backdrop" (click)="cerrarModal()">
+        <section
+            class="error-modal"
+            role="alert"
+            (click)="$event.stopPropagation()">
+
+            <button
+                type="button"
+                class="close-button"
+                aria-label="Cerrar modal"
+                (click)="cerrarModal()">
+                ×
+            </button>
+
+            <span class="error-icon">!</span>
+            <h2>No se pudieron cargar los detalles</h2>
+            <p>{{ error() }}</p>
+
+            <div class="error-actions">
+                <button type="button" class="retry-button" (click)="cargarDetalles()">
+                    Reintentar
+                </button>
+                <button type="button" class="cancel-button" (click)="cerrarModal()">
+                    Cerrar
+                </button>
+            </div>
+        </section>
+    </div>
+}
+
+@if (mostrarConfirmacion()) {
+    <app-confirmation-dialog
+        [title]="siguienteEstado() === 'ENVIADO' ? '¿Enviar pedido?' : '¿Entregar pedido?'"
+        [message]="'El estado del pedido cambiará de ' + (siguienteEstado() === 'ENVIADO' ? 'PENDIENTE a ENVIADO' : 'ENVIADO a ENTREGADO') + '. ¿Deseas continuar?'"
+        [confirmLabel]="siguienteEstado() === 'ENVIADO' ? 'Sí, enviar' : 'Sí, entregar'"
+        cancelLabel="Cancelar"
+        [busy]="actualizandoEstado()"
+        [busyLabel]="siguienteEstado() === 'ENVIADO' ? 'Enviando...' : 'Actualizando...'"
+        (confirmed)="confirmarCambioEstado()"
+        (cancelled)="cancelarCambioEstado()">
+    </app-confirmation-dialog>
+}
