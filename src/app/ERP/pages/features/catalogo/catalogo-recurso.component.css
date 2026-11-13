@@ -195,6 +195,12 @@
     background: #faf9fb;
 }
 
+.table-scroll thead th.related-heading {
+    color: #fff;
+    background: var(--resource-primary-dark);
+    text-align: center;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -219,9 +225,30 @@ td {
     font-size: 13px;
 }
 
+.table-scroll tbody tr.is-editing td {
+    border-top-color: #e7cc69;
+    background: #fff6cf;
+}
+
+.table-scroll tbody tr.is-editing td:first-child {
+    box-shadow: inset 4px 0 #d1a900;
+}
+
 .record-name {
     min-width: 130px;
     font-weight: 600;
+}
+
+.editing-badge {
+    margin-left: 8px;
+    padding: 3px 7px;
+    display: inline-block;
+    border-radius: 999px;
+    color: #624d00;
+    background: #f3dfa0;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 .parent-name {
@@ -248,6 +275,21 @@ td {
     display: flex;
     justify-content: flex-end;
     gap: 6px;
+}
+
+.editing-row-action {
+    border-color: #d1a900;
+    color: #624d00;
+    background: #f3dfa0;
+}
+
+.editing-row-action:hover {
+    color: #463700;
+    background: #ecd078;
+}
+
+.table-scroll tbody tr.is-editing .related-cell {
+    background: #fff6cf;
 }
 
 .delete-button:hover {
@@ -305,6 +347,22 @@ td {
     color: var(--resource-primary-dark);
     background: #f1eafa;
     font-size: 20px;
+}
+
+.form-panel.is-editing {
+    border-color: #d9b63b;
+    background: #fff8df;
+    box-shadow: 0 3px 14px rgba(145, 112, 0, .12);
+}
+
+.form-panel.is-editing .panel-heading {
+    border-bottom-color: #e7cc69;
+    background: #fff1bd;
+}
+
+.form-panel.is-editing .form-mark {
+    color: #624d00;
+    background: #f3dfa0;
 }
 
 .form-panel form {
@@ -467,19 +525,35 @@ td {
 }
 
 .related-link {
-    padding: 5px 12px;
-    border: 1px solid #ded4e4;
+    min-height: 34px;
+    padding: 0 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid var(--resource-primary-dark);
     border-radius: 5px;
-    color: #70468b;
-    background: #fff;
+    color: #fff;
+    background: var(--resource-primary-dark);
     font: inherit;
     font-size: 12px;
-    font-weight: 750;
+    font-weight: 700;
     cursor: pointer;
 }
 
 .related-link:hover:not(:disabled) {
-    background: #f7f1fa;
+    border-color: #3f2055;
+    background: #3f2055;
+}
+
+.related-link svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .related-link:disabled {

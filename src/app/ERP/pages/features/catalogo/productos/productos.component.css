@@ -234,16 +234,26 @@ td {
 }
 
 .variants-column {
-    min-width: 75px;
+    min-width: 125px;
     text-align: center;
 }
 
+.table-scroll thead th.variants-column.variants-heading {
+    color: #fff;
+    background: var(--resource-primary-dark);
+}
+
 .view-button {
-    padding: 6px 12px;
-    border: 1px solid #d8c6e8;
+    min-height: 34px;
+    padding: 0 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid var(--resource-primary-dark);
     border-radius: 4px;
-    color: var(--resource-primary);
-    background: #faf7fd;
+    color: #fff;
+    background: var(--resource-primary-dark);
     font: inherit;
     font-size: 12px;
     font-weight: 700;
@@ -251,8 +261,18 @@ td {
 }
 
 .view-button:hover {
-    border-color: var(--resource-primary);
-    background: #f1eafa;
+    border-color: #3f2055;
+    background: #3f2055;
+}
+
+.view-button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .actions-heading {
