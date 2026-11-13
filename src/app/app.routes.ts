@@ -37,6 +37,18 @@ export const routes: Routes = [
                 component: DashboardERPComponent
             },
             {
+                path: 'carrito',
+                loadComponent: () =>
+                    import('./ERP/pages/features/punto-venta/carrito/carrito.component')
+                        .then(module => module.CarritoERPComponent)
+            },
+            {
+                path: 'pedidos',
+                loadComponent: () =>
+                    import('./ERP/pages/features/punto-venta/pedido/pedidos.component')
+                        .then(module => module.PedidosERPComponent)
+            },
+            {
                 path: 'categorias',
                 loadComponent: () => import('./ERP/pages/features/catalogo/categoria/categoria.component')
                     .then((module) => module.CategoriaERPComponent)

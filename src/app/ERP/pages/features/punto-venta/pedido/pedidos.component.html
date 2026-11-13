@@ -1,0 +1,119 @@
+
+<section class="orders-page">
+    <header class="page-heading">
+        <div>
+            <p class="eyebrow">Punto de Venta</p>
+            <h1>Pedidos</h1>
+            <p class="description">
+                Consulta los pedidos registrados en el sistema.
+            </p>
+        </div>
+
+        <span class="count-badge">
+            {{ pedidos().length }} en total
+        </span>
+    </header>
+
+    @if (error()) {
+        <div class="notice failure" role="alert">
+            <span aria-hidden="true">!</span>
+            {{ error() }}
+            <button
+                type="button"
+                aria-label="Cerrar error"
+                (click)="error.set('')">
+                ×
+            </button>
+        </div>
+    }
+
+    <section class="panel" aria-labelledby="orders-list-title">
+        <header class="panel-heading">
+            <div>
+                <h2 id="orders-list-title">Listado de pedidos</h2>
+                <p>Pedidos registrados en el sistema.</p>
+            </div>
+
+            <button
+                class="refresh-button"
+                type="button"
+                title="Actualizar listado"
+                aria-label="Actualizar listado"
+                [disabled]="cargando()"
+                (click)="cargarPedidos()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 7v5h-5 M4 17v-5h5 M5.6 9A7 7 0 0 1 18 6l2 6 M4 12l2 6a7 7 0 0 0 12.4-3" />
+                </svg>
+            </button>
+        </header>
+
+        @if (cargando()) {
+            <div class="list-state" role="status">
+                <span class="spinner" aria-hidden="true"></span>
+                Cargando pedidos...
+            </div>
+        } @else if (pedidos().length === 0 && !error()) {
+            <div class="list-state empty-state">
+                <span aria-hidden="true">◇</span>
+                <strong>No hay pedidos todavía</strong>
+                <span>Cuando se registren pedidos, aparecerán en este listado.</span>
+            </div>
+        } @else if (pedidos().length > 0) {
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="number-column">N.º</th>
+                            <th>Estado</th>
+                            <th>Fecha / Hora</th>
+                            <th class="details-column">Detalles</th>
+                            <th>Pago Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (
+                            pedido of pedidos();
+                            track pedido.idPedido;
+                            let i = $index
+                        ) {
+                            <tr>
+                                <td class="number-column">
+                                    {{ i + 1 }}
+                                </td>
+
+                                <td>
+                                    <span
+                                        class="status-pill"
+                                        [class.status-enviado]="pedido.estadoPedido === 'ENVIADO'"
+                                        [class.status-pendiente]="pedido.estadoPedido === 'PENDIENTE'"
+                                        [class.status-entregado]="pedido.estadoPedido === 'ENTREGADO'"
+                                        [class.status-cancelado]="pedido.estadoPedido === 'CANCELADO'">
+                                        {{ pedido.estadoPedido }}
+                                    </span>
+                                </td>
+
+                                <td class="date-column">
+                                    {{ pedido.fechaPedido | date:'dd/MM/yyyy, HH:mm' }}
+                                </td>
+
+                                <td class="details-column">
+                                    <button
+                                        type="button"
+                                        class="view-button"
+                                        (click)="verDetalles(pedido)">
+                                        Ver
+                                    </button>
+                                </td>
+
+                                <td class="total-price">
+                                    {{ pedido.pagoTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</section>

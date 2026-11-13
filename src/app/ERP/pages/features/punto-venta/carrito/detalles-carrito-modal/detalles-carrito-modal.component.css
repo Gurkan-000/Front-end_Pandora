@@ -1,0 +1,236 @@
+
+:host {
+    display: contents;
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(25, 20, 29, 0.55);
+}
+
+.details-modal {
+    width: min(100%, 1000px);
+    max-height: 85dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e4dfe7;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    color: #29232d;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.section-label {
+    color: #756d79;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.modal-header h2 {
+    margin: 5px 0;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.modal-description {
+    margin: 0;
+    color: #756d79;
+    font-size: 13px;
+}
+
+.close-button {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: #756d79;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    background: #f2eef4;
+    color: #29232d;
+}
+
+.table-scroll {
+    width: 100%;
+    max-height: min(45dvh, 450px);
+    overflow: auto;
+    border: 1px solid #e4dfe7;
+    border-radius: 6px;
+}
+
+.details-table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.details-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f5f2f6;
+}
+
+.details-table th,
+.details-table td {
+    padding: 13px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eae6ed;
+    white-space: nowrap;
+}
+
+.details-table th {
+    color: #514957;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.details-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.details-table tbody tr:hover {
+    background: #faf9fb;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #29232d;
+}
+
+.quantity-pill {
+    display: inline-flex;
+    min-width: 30px;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: #f0eaf4;
+    color: #6c3f8f;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.subtotal {
+    font-weight: 700;
+    color: #29232d;
+}
+
+.state-cell {
+    height: 110px;
+    text-align: center !important;
+    color: #756d79;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.empty-cart-button {
+    min-height: 40px;
+    padding: 0 18px;
+    border: 1px solid #b64242;
+    border-radius: 5px;
+    background: #fff;
+    color: #b64242;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+}
+
+.empty-cart-button:hover:not(:disabled) {
+    background: #b64242;
+    color: #fff;
+}
+
+.empty-cart-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.error-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding: 12px;
+    border: 1px solid #e7bcbc;
+    border-radius: 5px;
+    background: #fff4f4;
+    color: #a52d2d;
+    font-size: 13px;
+}
+
+.error-message button {
+    border: none;
+    background: transparent;
+    color: #a52d2d;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 2px solid #e4dfe7;
+    border-top-color: #6c3f8f;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-backdrop {
+        padding: 10px;
+    }
+
+    .details-modal {
+        padding: 16px;
+    }
+
+    .modal-header h2 {
+        font-size: 18px;
+    }
+
+    .empty-cart-button {
+        width: 100%;
+    }
+}

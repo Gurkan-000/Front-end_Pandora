@@ -33,6 +33,26 @@ export const MENU_ERP: SeccionMenu[] = [
         ]
     },
     {
+        titulo: 'Punto de Venta',
+        items: [
+            {
+                etiqueta: 'Pedidos',
+                ruta: '/erp/pedidos',
+                icono: 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2 M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2H9V5z M9 12h6 M9 16h6'
+            },
+            {
+                etiqueta: 'Carrito',
+                ruta: '/erp/carrito',
+                icono: 'M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 7H6 M10 21h.01 M18 21h.01'
+            },
+            {
+                etiqueta: 'Ventas',
+                ruta: '/erp/ventas',
+                icono: 'M4 2h16v20H4z M8 6h8 M8 10h8 M8 14h4 M8 18h8'
+            }
+        ]
+    },
+    {
         titulo: 'Catálogo',
         items: [
             {

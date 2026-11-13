@@ -1,0 +1,109 @@
+
+<div class="modal-backdrop" (click)="cerrarModal()">
+    <section
+        class="details-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="details-modal-title"
+        (click)="$event.stopPropagation()">
+
+        <header class="modal-header">
+            <div>
+                <span class="section-label">Punto de Venta</span>
+                <h2 id="details-modal-title">Detalles del carrito</h2>
+                <p class="modal-description">{{ carrito.correo }}</p>
+            </div>
+
+            <button
+                type="button"
+                class="close-button"
+                aria-label="Cerrar modal"
+                (click)="cerrarModal()">
+                &times;
+            </button>
+        </header>
+
+        @if (error()) {
+            <div class="error-message">
+                {{ error() }}
+                <button type="button" (click)="cargarDetalles()">
+                    Reintentar
+                </button>
+            </div>
+        }
+
+        <div class="table-scroll">
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th>N.º</th>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Precio SubTotal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (cargando()) {
+                        <tr>
+                            <td colspan="5" class="state-cell">
+                                <span class="loading-spinner"></span>
+                                <span>Cargando detalles...</span>
+                            </td>
+                        </tr>
+                    } @else if (detalles().length === 0) {
+                        <tr>
+                            <td colspan="5" class="state-cell">
+                                Este carrito no tiene productos.
+                            </td>
+                        </tr>
+                    } @else {
+                        @for (detalle of detalles(); track detalle.idDetalleCarrito; let i = $index) {
+                            <tr>
+                                <td>{{ i + 1 }}</td>
+                                <td class="product-name">
+                                    {{ detalle.nombreProducto }}
+                                </td>
+                                <td>
+                                    {{ detalle.precioUnitario | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                </td>
+                                <td>
+                                    <span class="quantity-pill">
+                                        {{ detalle.cantidad }}
+                                    </span>
+                                </td>
+                                <td class="subtotal">
+                                    {{ detalle.precioSubTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="modal-footer">
+            <button
+                type="button"
+                class="empty-cart-button"
+                [disabled]="cargando() || vaciando() || detalles().length === 0"
+                (click)="abrirConfirmacion()">
+                Vaciar Carrito
+            </button>
+        </footer>
+    </section>
+</div>
+
+@if (mostrarConfirmacion()) {
+    <app-confirmation-dialog
+        title="Vaciar carrito"
+        message="¿Estás seguro de que deseas vaciar este carrito? Se eliminarán todos sus productos."
+        confirmLabel="Vaciar"
+        cancelLabel="Cancelar"
+        [busy]="vaciando()"
+        busyLabel="Vaciando..."
+        (confirmed)="confirmarVaciado()"
+        (cancelled)="cancelarVaciado()">
+    </app-confirmation-dialog>
+}

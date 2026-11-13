@@ -1,0 +1,131 @@
+<section class="cart-page">
+
+    <header class="page-heading">
+        <div>
+            <p class="eyebrow">Punto de Venta</p>
+            <h1>Carritos</h1>
+            <p class="description">
+                Consulta los carritos de compra registrados por los usuarios.
+            </p>
+        </div>
+
+        <span class="count-badge">
+            {{ carritos().length }} en total
+        </span>
+    </header>
+
+    @if (error()) {
+    <div class="notice failure" role="alert">
+        <span aria-hidden="true">!</span>
+        {{ error() }}
+
+        <button
+            type="button"
+            aria-label="Cerrar error"
+            (click)="error.set('')">
+            ×
+        </button>
+    </div>
+    }
+
+    <section class="panel" aria-labelledby="cart-list-title">
+
+        <header class="panel-heading">
+            <div>
+                <h2 id="cart-list-title">Listado de carritos</h2>
+                <p>Carritos registrados en el sistema.</p>
+            </div>
+
+            <button
+                class="refresh-button"
+                type="button"
+                title="Actualizar listado"
+                aria-label="Actualizar listado"
+                [disabled]="cargando()"
+                (click)="cargarCarritos()">
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 7v5h-5 M4 17v-5h5 M5.6 9A7 7 0 0 1 18 6l2 6 M4 12l2 6a7 7 0 0 0 12.4-3" />
+                </svg>
+            </button>
+        </header>
+
+        @if (cargando()) {
+        <div class="list-state" role="status">
+            <span class="spinner" aria-hidden="true"></span>
+            Cargando carritos...
+        </div>
+
+        } @else if (carritos().length === 0 && !error()) {
+        <div class="list-state empty-state">
+            <span aria-hidden="true">◇</span>
+            <strong>No hay carritos registrados</strong>
+            <span>Cuando existan carritos, aparecerán en este listado.</span>
+        </div>
+
+        } @else if (carritos().length > 0) {
+
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="number-column">N.º</th>
+                        <th>Correo</th>
+                        <th class="quantity-column">Cantidad</th>
+                        <th class="details-column">Detalles</th>
+                        <th class="price-column">Precio Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (
+                        carrito of carritos();
+                        track carrito.idCarrito;
+                        let i = $index
+                    ) {
+                    <tr>
+                        <td class="number-column">
+                            {{ i + 1 }}
+                        </td>
+
+                        <td class="email-column">
+                            {{ carrito.correo }}
+                        </td>
+
+                        <td class="quantity-column">
+                            <span class="count-pill">
+                                {{ carrito.cantidadProductos }}
+                            </span>
+                        </td>
+
+                        <td class="details-column">
+                            <button
+                                type="button"
+                                class="view-button"
+                                (click)="verDetalles(carrito)">
+                                Ver
+                            </button>
+                        </td>
+
+                        <td class="price-column">
+                            {{ carrito.precioTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+
+    </section>
+
+</section>
+
+
+@if (carritoSeleccionado(); as carrito) {
+    <app-detalles-carrito-modal
+        [carrito]="carrito"
+        (cerrar)="cerrarDetalles()"
+        (carritoVaciado)="actualizarListadoCarritos()">
+    </app-detalles-carrito-modal>
+}
