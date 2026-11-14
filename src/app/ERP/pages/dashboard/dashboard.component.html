@@ -1,13 +1,438 @@
+
 <section class="dashboard">
 
     <div class="page-header">
-        <h1>Dashboard</h1>
-        <p>Resumen general de la tienda</p>
+        <div>
+            <h1>Dashboard</h1>
+            <p>Resumen general de la tienda</p>
+        </div>
+
+        <button type="button" class="refresh-button" (click)="cargarDashboard()">
+            Actualizar información
+        </button>
     </div>
 
-    <div class="placeholder-card">
-        Esta página es un marco de ejemplo para el layout del ERP.
-        Reemplaza este contenido con el dashboard real.
-    </div>
+
+    <!-- RESUMEN -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Resumen general</h2>
+        </div>
+
+        @if (cargandoResumen()) {
+
+            <p class="loading-message">Cargando resumen...</p>
+
+        } @else if (errorResumen()) {
+
+            <p class="error-message">{{ errorResumen() }}</p>
+
+        } @else if (resumen(); as datos) {
+
+            <div class="stats-grid">
+
+                <article class="stat-card">
+                    <span class="stat-label">Ventas totales</span>
+
+                    <strong class="stat-value">
+                        {{ formatearMoneda(datos.ventasTotales) }}
+                    </strong>
+
+                    <div class="stat-variation"
+                         [class]="obtenerClaseVariacion(datos.variacionVentas)">
+                        <span class="variation-icon">
+                            {{ obtenerIconoVariacion(datos.variacionVentas) }}
+                        </span>
+                        <span>{{ formatearVariacion(datos.variacionVentas) }}</span>
+                        <span class="variation-description">vs. semana anterior</span>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Pedidos registrados</span>
+
+                    <strong class="stat-value">
+                        {{ datos.cantidadPedidos }}
+                    </strong>
+
+                    <div class="stat-variation"
+                         [class]="obtenerClaseVariacion(datos.variacionPedidos)">
+                        <span class="variation-icon">
+                            {{ obtenerIconoVariacion(datos.variacionPedidos) }}
+                        </span>
+                        <span>{{ formatearVariacion(datos.variacionPedidos) }}</span>
+                        <span class="variation-description">vs. semana anterior</span>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Unidades vendidas</span>
+
+                    <strong class="stat-value">
+                        {{ datos.unidadesVendidas }}
+                    </strong>
+
+                    <div class="stat-variation"
+                         [class]="obtenerClaseVariacion(datos.variacionUnidades)">
+                        <span class="variation-icon">
+                            {{ obtenerIconoVariacion(datos.variacionUnidades) }}
+                        </span>
+                        <span>{{ formatearVariacion(datos.variacionUnidades) }}</span>
+                        <span class="variation-description">vs. semana anterior</span>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Valor promedio por pedido</span>
+
+                    <strong class="stat-value">
+                        {{ formatearMoneda(datos.ticketPromedio) }}
+                    </strong>
+
+                    <div class="stat-variation"
+                         [class]="obtenerClaseVariacion(datos.variacionTicketPromedio)">
+                        <span class="variation-icon">
+                            {{ obtenerIconoVariacion(datos.variacionTicketPromedio) }}
+                        </span>
+                        <span>{{ formatearVariacion(datos.variacionTicketPromedio) }}</span>
+                        <span class="variation-description">vs. semana anterior</span>
+                    </div>
+                </article>
+
+            </div>
+
+        }
+
+    </section>
+
+
+    <!-- ACTIVIDAD DE VENTAS -->
+    <section class="dashboard-section">
+
+        <div class="section-heading period-heading">
+
+            <div>
+                <h2>Actividad de ventas</h2>
+
+                <p class="period-label">
+                    Periodo consultado: {{ periodoSemana() }}
+
+                    @if (esSemanaActual()) {
+                        <span class="current-week-badge">Semana actual</span>
+                    }
+                </p>
+            </div>
+
+            <div class="week-navigation">
+
+                <button
+                    type="button"
+                    class="week-button"
+                    aria-label="Consultar semana anterior"
+                    title="Semana anterior"
+                    (click)="cambiarSemana(-1)">
+                    &#8592;
+                </button>
+
+                <span class="week-navigation-label">Semana</span>
+
+                <button
+                    type="button"
+                    class="week-button"
+                    aria-label="Consultar semana siguiente"
+                    title="Semana siguiente"
+                    [disabled]="!puedeAvanzarSemana()"
+                    (click)="cambiarSemana(1)">
+                    &#8594;
+                </button>
+
+            </div>
+
+        </div>
+
+        @if (cargandoVentas()) {
+
+            <p class="loading-message">Cargando ventas...</p>
+
+        } @else if (errorVentas()) {
+
+            <p class="error-message">{{ errorVentas() }}</p>
+
+        } @else {
+
+            <div class="data-card">
+
+                <h3>Ventas por día</h3>
+
+                @if (ventas().length === 0) {
+
+                    <p class="empty-message">
+                        No hay ventas registradas en este periodo.
+                    </p>
+
+                } @else {
+
+                    <div class="chart-container">
+                        <canvas
+                            baseChart
+                            [type]="'line'"
+                            [data]="ventasChartData()"
+                            [options]="ventasChartOptions">
+                        </canvas>
+                    </div>
+
+                }
+
+            </div>
+
+        }
+
+    </section>
+    
+
+    <!-- PRODUCTOS MAS VENDIDOS -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Productos más vendidos</h2>
+        </div>
+
+        @if (cargandoProductos()) {
+
+            <p class="loading-message">Cargando productos...</p>
+
+        } @else if (errorProductos()) {
+
+            <p class="error-message">{{ errorProductos() }}</p>
+
+        } @else if (productosMasVendidos().length === 0) {
+
+            <p class="empty-message">
+                No hay productos vendidos en este periodo.
+            </p>
+
+        } @else {
+
+            <div class="chart-card">
+
+                <div class="chart-container chart-container-horizontal">
+                    <canvas
+                        baseChart
+                        [type]="'bar'"
+                        [data]="productosChartData()"
+                        [options]="productosChartOptions">
+                    </canvas>
+                </div>
+
+            </div>
+
+        }
+
+    </section>
+
+
+    <!-- VENTAS POR CATEGORIA -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Ventas por categoría</h2>
+        </div>
+
+        @if (cargandoCategorias()) {
+
+            <p class="loading-message">Cargando categorías...</p>
+
+        } @else if (errorCategorias()) {
+
+            <p class="error-message">{{ errorCategorias() }}</p>
+
+        } @else if (ventasPorCategoria().length === 0) {
+
+            <p class="empty-message">
+                No hay ventas por categoría en este periodo.
+            </p>
+
+        } @else {
+
+            <div class="chart-card">
+
+                <div class="chart-container chart-container-doughnut">
+                    <canvas
+                        baseChart
+                        [type]="'doughnut'"
+                        [data]="categoriasChartData()"
+                        [options]="categoriasChartOptions">
+                    </canvas>
+                </div>
+
+            </div>
+
+        }
+
+    </section>
+
+
+    <!-- PEDIDOS RECIENTES -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Pedidos recientes</h2>
+        </div>
+
+        @if (cargandoPedidos()) {
+
+            <p class="loading-message">Cargando pedidos...</p>
+
+        } @else if (errorPedidos()) {
+
+            <p class="error-message">{{ errorPedidos() }}</p>
+
+        } @else if (pedidosRecientes().length === 0) {
+
+            <p class="empty-message">
+                Todavía no hay pedidos registrados.
+            </p>
+
+        } @else {
+
+            <div class="data-card">
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Correo</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (pedido of pedidosRecientes(); track pedido.idPedido) {
+                                <tr>
+                                    <td>{{ pedido.correo }}</td>
+                                    <td>{{ formatearFecha(pedido.fechaPedido) }}</td>
+                                    <td>
+                                        <span
+                                            class="status-badge"
+                                            [class]="obtenerClaseEstado(pedido.estadoPedido)">
+                                            {{ pedido.estadoPedido }}
+                                        </span>
+                                    </td>
+                                    <td>{{ formatearMoneda(pedido.pagoTotal) }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        }
+
+    </section>
+
+
+    <!-- ALERTAS DE STOCK -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Alertas de stock</h2>
+                <p>Control global de inventario</p>
+            </div>
+        </div>
+
+        @if (cargandoAlertas()) {
+
+            <p class="loading-message">Cargando alertas...</p>
+
+        } @else if (errorAlertas()) {
+
+            <p class="error-message">{{ errorAlertas() }}</p>
+
+        } @else if (alertasStock(); as alertas) {
+
+            <div class="stats-grid alert-stats">
+
+                <article class="stat-card">
+                    <span class="stat-label">Stock mínimo global</span>
+                    <strong class="stat-value">
+                        {{ alertas.stockMinimoGlobal }} unidades
+                    </strong>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Variantes con stock bajo</span>
+                    <strong class="stat-value">
+                        {{ alertas.cantidadVariantesStockBajo }}
+                    </strong>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Variantes agotadas</span>
+                    <strong class="stat-value">
+                        {{ alertas.cantidadVariantesAgotadas }}
+                    </strong>
+                </article>
+
+            </div>
+
+            @if (alertas.variantes.length === 0) {
+
+                <p class="empty-message">
+                    No hay alertas de stock. El inventario está dentro del límite establecido.
+                </p>
+
+            } @else {
+
+                <div class="data-card">
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Variante</th>
+                                    <th>Stock</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for (
+                                    variante of alertas.variantes;
+                                    track variante.idVarianteProducto
+                                ) {
+                                    <tr>
+                                        <td>{{ variante.nombreProducto }}</td>
+                                        <td>{{ variante.atributos }}</td>
+                                        <td>{{ variante.stock }}</td>
+                                        <td>
+                                            <span
+                                                class="status-badge"
+                                                [class]="variante.estado === 'AGOTADO'
+                                                    ? 'estado-agotado'
+                                                    : 'estado-stock-bajo'">
+                                                {{ variante.estado === 'AGOTADO'
+                                                    ? 'Agotado'
+                                                    : 'Stock bajo' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            }
+
+        }
+
+    </section>
 
 </section>
