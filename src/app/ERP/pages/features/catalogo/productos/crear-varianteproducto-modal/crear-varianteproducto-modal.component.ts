@@ -30,6 +30,8 @@ import {
 
 import { NgSelectModule } from '@ng-select/ng-select';
 
+import { API_BASE_URL } from '../../../../../../core/config/api.config';
+
 interface AtributoConValores {
     atributo: ResponseAtributo;
     valores: ResponseValorAtributo[];
@@ -58,7 +60,7 @@ export class CrearVarianteProductoModalComponent implements OnInit {
     @Output() cerrar = new EventEmitter<void>();
     @Output() varianteCreada = new EventEmitter<void>();
 
-    readonly baseUrl = 'http://localhost:8080';
+    readonly baseUrl = API_BASE_URL;
 
     readonly atributosConValores = signal<AtributoConValores[]>([]);
     readonly valoresSeleccionados = signal<Record<string, string>>({});

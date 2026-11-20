@@ -12,6 +12,8 @@ import {
     ResponseAlertasStockDashboard
 } from '../interfaces/dashboard.interface';
 
+import { API_URL } from '../../core/config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -19,7 +21,7 @@ export class DashboardService {
 
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = 'http://localhost:8080/api/dashboard';
+    private readonly apiUrl = `${API_URL}/dashboard`;
 
 
     obtenerResumen(fecha: string): Observable<ResponseResumenDashboard> {

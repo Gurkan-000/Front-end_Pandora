@@ -6,6 +6,8 @@ import { CrearPedidoRequest } from '../interfaces/crear-pedido.interface';
 import { ResponsePedidoCliente } from '../interfaces/response-pedido-cliente.interface';
 import { ResponsePedidoDetalle } from '../interfaces/response-detalle-pedido.interface';
 
+import { API_URL } from '../config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -13,7 +15,7 @@ export class PedidoService {
 
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = 'http://localhost:8080/api/pedido';
+    private readonly apiUrl = `${API_URL}/pedido`;
 
     crearPedido(request: CrearPedidoRequest): Observable<void> {
 

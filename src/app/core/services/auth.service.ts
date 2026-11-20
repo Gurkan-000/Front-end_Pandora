@@ -13,6 +13,7 @@ import {
 import { LoginRequest } from '../interfaces/login-request.interface';
 import { RegisterRequest } from '../interfaces/register-request.interface';
 import { ResponseAuth } from '../interfaces/response-auth.interface';
+import { AUTH_API_URL } from '../config/api.config';
 
 export interface ConfirmarContrasenaRequest {
     token: string;
@@ -27,7 +28,7 @@ export class AuthService {
 
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = 'http://localhost:8080/api/auth';
+    private readonly apiUrl = AUTH_API_URL;
 
     // Usuario autenticado actual (se llena con obtenerSesion()).
     private readonly usuarioActualSignal = signal<ResponseAuth | null>(null);

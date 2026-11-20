@@ -25,6 +25,8 @@ import {
 } from '../../../../../interfaces/crear-producto.interface';
 import { NgSelectModule } from '@ng-select/ng-select';
 
+import { API_BASE_URL } from '../../../../../../core/config/api.config';
+
 @Component({
     selector: 'app-crear-producto-modal',
     standalone: true,
@@ -66,7 +68,7 @@ export class CrearProductoModalComponent implements OnInit {
     readonly errorImagen = signal('');
     readonly mensajeImagen = signal('');
 
-    readonly baseUrl = 'http://localhost:8080';
+    readonly baseUrl = API_BASE_URL;
 
     seleccionarImagen(event: Event): void {
         const input = event.target as HTMLInputElement;

@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { ResponseCarritoERP } from '../interfaces/response-carrito-erp.interface';
 import { ResponseDetalleCarritoERP } from '../interfaces/response-detalle-carrito-erp.interface';
 
+import { API_URL } from '../../core/config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -12,7 +14,7 @@ export class CarritoERPService {
 
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = 'http://localhost:8080/api/carrito';
+    private readonly apiUrl = `${API_URL}/carrito`;
 
     listarCarritos(): Observable<ResponseCarritoERP[]> {
         return this.http.get<ResponseCarritoERP[]>(

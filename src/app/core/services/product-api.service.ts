@@ -10,6 +10,8 @@ import {
     ProductVariantResponse
 } from '../../E-Commerce/pages/catalogo/product.interface';
 
+import { API_BASE_URL, API_URL } from '../config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -17,8 +19,8 @@ export class ProductApiService {
 
     private readonly http = inject(HttpClient);
 
-    private readonly backendUrl = 'http://localhost:8080';
-    private readonly apiUrl = `${this.backendUrl}/api`;
+    private readonly backendUrl = API_BASE_URL;
+    private readonly apiUrl = API_URL;
 
     getProducts(): Observable<Product[]> {
 

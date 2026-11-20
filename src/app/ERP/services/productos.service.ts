@@ -17,13 +17,15 @@ import { ResponseValorAtributo } from '../interfaces/response-variante-producto.
 
 import { ResponseVarianteProducto } from '../interfaces/response-variante-producto.interface';
 
+import { API_URL } from '../../core/config/api.config';
+
 @Injectable({
     providedIn: 'root'
 })
 export class ProductosService {
     private readonly http = inject(HttpClient);
 
-    private readonly apiUrl = 'http://localhost:8080/api';
+    private readonly apiUrl = API_URL;
 
     listarProductos(): Observable<ResponseProducto[]> {
         return this.http.get<ResponseProducto[]>(

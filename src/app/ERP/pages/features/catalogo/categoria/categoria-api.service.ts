@@ -3,13 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Categoria, CategoriaRequest } from './categoria.interface';
+import { API_URL } from '../../../../../core/config/api.config';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CategoriaApiService {
     private readonly http = inject(HttpClient);
-    private readonly apiUrl = 'http://localhost:8080/api/categoria';
+    private readonly apiUrl = `${API_URL}/categoria`;
 
     listar(): Observable<Categoria[]> {
         return this.http.get<Categoria[]>(`${this.apiUrl}/listar`);

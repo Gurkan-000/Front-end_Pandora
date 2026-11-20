@@ -9,9 +9,13 @@ import {
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 
-const API_URL = 'http://localhost:8080';
-const CSRF_URL = `${API_URL}/api/auth/csrf`;
-const REFRESH_URL = `${API_URL}/api/auth/refresh`;
+import {
+    API_BASE_URL,
+    AUTH_API_URL
+} from '../config/api.config';
+
+const CSRF_URL = `${AUTH_API_URL}/csrf`;
+const REFRESH_URL = `${AUTH_API_URL}/refresh`;
 
 interface CsrfTokenResponse {
     headerName: string;
@@ -23,7 +27,7 @@ export const csrfInterceptor: HttpInterceptorFn = (request, next) => {
     const backendHttp = new HttpClient(inject(HttpBackend));
 
     // Solo interceptar peticiones dirigidas a nuestro backend.
-    if (!request.url.startsWith(API_URL)) {
+    if (!request.url.startsWith(`${API_BASE_URL}/`)) {
         return next(request);
     }
 
@@ -68,7 +72,7 @@ export const csrfInterceptor: HttpInterceptorFn = (request, next) => {
                     if (error.status !== 401
                         || request.url === REFRESH_URL
                         || request.url === CSRF_URL
-                        || request.url.startsWith(`${API_URL}/api/auth/`)) {
+                        || request.url.startsWith(`${AUTH_API_URL}/`)) {
                         return throwError(() => error);
                     }
 

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { API_URL } from '../../../../core/config/api.config';
+
 export type CatalogResource =
     | 'categoria'
     | 'subcategoria'
@@ -17,7 +19,7 @@ export type CatalogRecord = Record<string, string>;
 })
 export class CatalogoResourceApiService {
     private readonly http = inject(HttpClient);
-    private readonly apiUrl = 'http://localhost:8080/api';
+    private readonly apiUrl = API_URL;
 
     listar(resource: CatalogResource): Observable<CatalogRecord[]> {
         return this.http.get<CatalogRecord[]>(
