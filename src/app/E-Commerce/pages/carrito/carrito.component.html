@@ -72,7 +72,7 @@
                             </td>
 
                             <td>
-                                {{ detalle.precioUnitario | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                {{ detalle.precioUnitario | currency:'USD':'symbol':'1.2-2':'en-US' }}
                             </td>
 
                             <td>
@@ -80,7 +80,7 @@
                             </td>
 
                             <td class="subtotal">
-                                {{ detalle.precioSubTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                                {{ detalle.precioSubTotal | currency:'USD':'symbol':'1.2-2':'en-US' }}
                             </td>
 
                             <td>
@@ -113,7 +113,7 @@
                 <div class="cart-total">
                     <span>Total</span>
                     <strong>
-                        {{ carritoActual.precioTotal | currency:'PEN':'symbol':'1.2-2':'es-PE' }}
+                        {{ carritoActual.precioTotal | currency:'USD':'symbol':'1.2-2':'en-US' }}
                     </strong>
                 </div>
 
@@ -223,10 +223,10 @@
                 ✓
             </div>
 
-            <h3>¡Pedido registrado!</h3>
+            <h3>¡Pago confirmado!</h3>
 
             <p>
-                Tu compra se ha procesado correctamente.
+                Tu pago se ha procesado correctamente.
                 Gracias por comprar en Pandora.
             </p>
 
@@ -238,7 +238,7 @@
 
         } @else {
 
-        <form class="purchase-form" [formGroup]="formularioCompra" (ngSubmit)="confirmarCompra()">
+        <form class="purchase-form" [formGroup]="formularioCompra">
 
             @if (errorCompra()) {
             <div class="purchase-error" role="alert">
@@ -384,27 +384,42 @@
             <div class="purchase-notice">
                 <span aria-hidden="true">ⓘ</span>
                 <p>
-                    Por ahora, el proceso de pago es simbólico.
-                    Al confirmar, se registrará tu pedido.
+                    El pago se realizará de forma segura mediante PayPal.
+                    Tu pedido se confirmará cuando el backend verifique el pago.
+                    Moneda: USD.
                 </p>
+            </div>
+
+            <div
+                #paypalButtonContainer
+                id="paypal-button-container"
+                class="paypal-button-container"
+                [hidden]="!mostrarBotonesPayPal()">
             </div>
 
             <footer class="purchase-modal-footer">
 
-                <button type="button" class="purchase-cancel-button" [disabled]="procesandoCompra()"
+                <button
+                    type="button"
+                    class="purchase-cancel-button"
+                    [disabled]="procesandoCompra()"
                     (click)="cerrarModalCompra()">
                     Cancelar
                 </button>
 
-                <button type="submit" class="purchase-submit-button" [disabled]="procesandoCompra()">
+                @if (!mostrarBotonesPayPal()) {
 
-                    @if (procesandoCompra()) {
-                    Procesando...
-                    } @else {
-                    Confirmar compra
-                    }
+                    <button
+                        type="button"
+                        class="purchase-submit-button"
+                        [disabled]="procesandoCompra()"
+                        (click)="iniciarPago()">
 
-                </button>
+                        Continuar al pago
+
+                    </button>
+
+                }
 
             </footer>
 

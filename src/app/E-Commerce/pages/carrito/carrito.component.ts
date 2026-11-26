@@ -2,8 +2,10 @@ import { CurrencyPipe } from '@angular/common';
 import {
     Component,
     DestroyRef,
+    ElementRef,
     inject,
-    signal
+    signal,
+    ViewChild
 } from '@angular/core';
 
 import { Router, RouterLink } from '@angular/router';
@@ -29,6 +31,16 @@ import { CrearPedidoRequest } from '../../../core/interfaces/crear-pedido.interf
 
 import { ConfirmationDialogComponent } from '../../../ERP/shared/confirmation-dialog/confirmation-dialog.component';
 
+import { firstValueFrom } from 'rxjs';
+
+import { loadScript } from '@paypal/paypal-js';
+
+import { environment } from '../../../../environments/environment';
+
+import { PasarelaPagoService } from '../../../core/services/pasarela-pago.service';
+
+import { ResponseInicioPago } from '../../../core/interfaces/pago.interface';
+
 @Component({
     selector: 'app-carrito',
     standalone: true,
@@ -45,10 +57,20 @@ export class CarritoComponent {
 
     private readonly authService = inject(AuthService);
     private readonly carritoService = inject(CarritoService);
-    private readonly pedidoService = inject(PedidoService);
     private readonly router = inject(Router);
     private readonly destroyRef = inject(DestroyRef);
     private readonly fb = inject(FormBuilder);
+
+    private readonly pasarelaPagoService = inject(PasarelaPagoService);
+
+    @ViewChild('paypalButtonContainer')
+    private paypalButtonContainer?: ElementRef<HTMLDivElement>;
+
+    private paypalRenderizado = false;
+
+    private pedidoEnPago: ResponseInicioPago | null = null;
+
+    readonly mostrarBotonesPayPal = signal(false);
 
     readonly carrito = signal<ResponseCarrito | null>(null);
 
@@ -261,7 +283,6 @@ export class CarritoComponent {
 
     // Abre la modal de procesamiento de compra.
     abrirModalCompra(): void {
-
         if (
             !this.carrito()?.detallesCarrito.length ||
             this.procesandoCompra()
@@ -271,10 +292,14 @@ export class CarritoComponent {
 
         this.errorCompra.set('');
         this.compraExitosa.set(false);
+        this.mostrarBotonesPayPal.set(false);
+
+        this.paypalRenderizado = false;
+        this.pedidoEnPago = null;
+
         this.formularioCompra.reset();
 
         this.mostrarModalCompra.set(true);
-
     }
 
     // Cierra la modal y actualiza el carrito después de una compra exitosa.
@@ -286,18 +311,37 @@ export class CarritoComponent {
 
         const pedidoFueCreado = this.compraExitosa();
 
+        this.paypalButtonContainer?.nativeElement.replaceChildren();
+
+        this.paypalRenderizado = false;
+        this.pedidoEnPago = null;
+
         this.mostrarModalCompra.set(false);
+        this.mostrarBotonesPayPal.set(false);
+
         this.errorCompra.set('');
         this.compraExitosa.set(false);
+
         this.formularioCompra.reset();
 
         if (pedidoFueCreado) {
             this.cargarCarrito();
         }
-
     }
 
-    confirmarCompra(): void {
+    private construirRequestPedido(): CrearPedidoRequest {
+
+        const valores = this.formularioCompra.getRawValue();
+
+        return {
+            informacionAdicional: valores.informacionAdicional.trim(),
+            departamentoEntrega: valores.departamentoEntrega.trim(),
+            distritoEntrega: valores.distritoEntrega.trim(),
+            direccionEntrega: valores.direccionEntrega.trim()
+        };
+    }
+
+    iniciarPago(): void {
 
         if (this.procesandoCompra() || this.compraExitosa()) {
             return;
@@ -308,15 +352,7 @@ export class CarritoComponent {
             return;
         }
 
-        const valores = this.formularioCompra.getRawValue();
-
-        // Evitamos enviar campos que contengan solamente espacios.
-        const request: CrearPedidoRequest = {
-            informacionAdicional: valores.informacionAdicional.trim(),
-            departamentoEntrega: valores.departamentoEntrega.trim(),
-            distritoEntrega: valores.distritoEntrega.trim(),
-            direccionEntrega: valores.direccionEntrega.trim()
-        };
+        const request = this.construirRequestPedido();
 
         if (
             !request.informacionAdicional ||
@@ -329,40 +365,189 @@ export class CarritoComponent {
         }
 
         this.errorCompra.set('');
-        this.procesandoCompra.set(true);
 
-        this.pedidoService.crearPedido(request).pipe(
+        this.mostrarBotonesPayPal.set(true);
 
-            finalize(() => this.procesandoCompra.set(false)),
+        void this.renderizarBotonesPayPal();
+    }
 
-            takeUntilDestroyed(this.destroyRef)
 
-        ).subscribe({
+    private async renderizarBotonesPayPal(): Promise<void> {
 
-            next: () => {
-                this.compraExitosa.set(true);
-            },
+        if (this.paypalRenderizado) {
+            return;
+        }
 
-            error: error => {
+        if (
+            !environment.paypalClientId ||
+            environment.paypalClientId.startsWith('TU_CLIENT_ID')
+        ) {
+            this.errorCompra.set(
+                'Configura el Client ID de PayPal antes de continuar.'
+            );
+            return;
+        }
 
-                console.error('Error al procesar la compra:', error);
+        try {
 
-                if (error.status === 401) {
-                    this.mostrarModalCompra.set(false);
-                    this.authService.limpiarSesionLocal();
-                    void this.router.navigate(['/login']);
-                    return;
-                }
+            const paypal = await loadScript({
+                clientId: environment.paypalClientId,
+                currency: 'USD',
+                intent: 'capture'
+            });
 
-                this.errorCompra.set(
-                    error.status === 400
-                        ? 'Verifica los datos de entrega e inténtalo nuevamente.'
-                        : 'No fue posible procesar tu compra. Inténtalo nuevamente.'
-                );
-
+            if (!paypal?.Buttons || !this.paypalButtonContainer) {
+                throw new Error('No se pudo inicializar PayPal.');
             }
 
-        });
+            const buttons = paypal.Buttons({
+
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'paypal'
+                },
+
+                createOrder: async () => {
+
+                    this.procesandoCompra.set(true);
+
+                    try {
+
+                        const request = this.construirRequestPedido();
+
+                        const response = await firstValueFrom(
+                            this.pasarelaPagoService.crearOrden(request)
+                        );
+
+                        if (
+                            !response.idPedido ||
+                            !response.idOrdenPayPal
+                        ) {
+                            throw new Error(
+                                'El backend no devolvió los datos de la orden.'
+                            );
+                        }
+
+                        this.pedidoEnPago = response;
+
+                        return response.idOrdenPayPal;
+
+                    } catch (error) {
+
+                        this.manejarErrorPago(error);
+
+                        throw error;
+
+                    } finally {
+
+                        this.procesandoCompra.set(false);
+
+                    }
+                },
+
+                onApprove: async (data) => {
+
+                    if (!this.pedidoEnPago) {
+                        this.errorCompra.set(
+                            'No se encontró el pedido asociado al pago.'
+                        );
+                        return;
+                    }
+
+                    this.procesandoCompra.set(true);
+
+                    try {
+
+                        const response = await firstValueFrom(
+                            this.pasarelaPagoService.capturarPago({
+                                idPedido: this.pedidoEnPago.idPedido,
+                                idOrdenPayPal: data.orderID
+                            })
+                        );
+
+                        if (response.estadoPago !== 'PROCEDE') {
+                            throw new Error(
+                                'El backend no confirmó el pago.'
+                            );
+                        }
+
+                        this.compraExitosa.set(true);
+
+                        this.mostrarBotonesPayPal.set(false);
+
+                    } catch (error) {
+
+                        this.manejarErrorPago(error);
+
+                    } finally {
+
+                        this.procesandoCompra.set(false);
+
+                    }
+
+                },
+
+                onCancel: () => {
+
+                    this.errorCompra.set(
+                        'Cancelaste el proceso de pago. Puedes intentarlo nuevamente.'
+                    );
+
+                },
+
+                onError: (error) => {
+
+                    console.error('Error de PayPal:', error);
+
+                    this.errorCompra.set(
+                        'Ocurrió un problema con PayPal. Inténtalo nuevamente.'
+                    );
+
+                }
+
+            });
+
+            await buttons.render(
+                this.paypalButtonContainer.nativeElement
+            );
+
+            this.paypalRenderizado = true;
+
+        } catch (error) {
+
+            console.error('Error al inicializar PayPal:', error);
+
+            this.errorCompra.set(
+                'No fue posible cargar PayPal. Recarga e inténtalo nuevamente.'
+            );
+
+        }
+
+    }
+
+
+    private manejarErrorPago(error: unknown): void {
+
+        console.error('Error durante el pago:', error);
+
+        const errorHttp = error as { status?: number };
+
+        if (errorHttp.status === 401) {
+
+            this.mostrarModalCompra.set(false);
+
+            this.authService.limpiarSesionLocal();
+
+            void this.router.navigate(['/login']);
+
+            return;
+        }
+
+        this.errorCompra.set(
+            'No fue posible completar el pago. Verifica tu información e inténtalo nuevamente.'
+        );
 
     }
 

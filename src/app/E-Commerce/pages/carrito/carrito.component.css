@@ -7,6 +7,16 @@
     --cart-accent: #f2bf4b;
 }
 
+.paypal-button-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 18px auto;
+}
+
+.paypal-button-container[hidden] {
+    display: none;
+}
+
 .cart-page {
     min-height: 550px;
     padding: 45px 24px 80px;
