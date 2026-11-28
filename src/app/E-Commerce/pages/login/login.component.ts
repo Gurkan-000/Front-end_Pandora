@@ -182,7 +182,7 @@ export class LoginCommerceComponent {
                 this.cargando = false;
 
                 this.mensaje =
-                    'Se ha enviado un correo de verificación. Revisa tu bandeja de entrada.';
+                    'Tu cuenta fue creada con exito.';
 
                 this.registerForm.reset();
 
